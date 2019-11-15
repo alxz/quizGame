@@ -139,7 +139,10 @@ function mazeQuestionsArr($mazeInit,$listQuestions) {
         $qObj = new Question();
         if ($subValue == '1') {
           // code...
-          if ($indexQ >= ($roomsCount / 2)) {
+          // if ($indexQ >= ($roomsCount / 2)) {
+          //   $indexQ = 0;
+          // }
+          if ($indexQ > 12) {
             $indexQ = 0;
           }
           //$strIndex = (string) $indexQ;

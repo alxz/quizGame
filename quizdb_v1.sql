@@ -3,10 +3,11 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 15, 2019 at 11:14 PM
+-- Generation Time: Nov 16, 2019 at 03:35 PM
 -- Server version: 5.7.23
 -- PHP Version: 7.0.32
 
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -18,26 +19,29 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: "quizdb"
+-- Database: `quizdb`
 --
-CREATE DATABASE IF NOT EXISTS "quizdb" DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE quizdb;
+CREATE DATABASE IF NOT EXISTS `quizdb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `quizdb`;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table "tabanswers"
+-- Table structure for table `tabanswers`
 --
 
-DROP TABLE IF EXISTS `tabanswers`;
-CREATE TABLE "tabanswers" ;
+CREATE TABLE `tabanswers` (
+  `ansId` bigint(20) NOT NULL,
+  `ansTxt` text COLLATE latin1_general_ci NOT NULL,
+  `ansQId` bigint(20) NOT NULL,
+  `ansIsValid` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
--- Dumping data for table "tabanswers"
+-- Dumping data for table `tabanswers`
 --
 
-SET IDENTITY_INSERT "tabanswers" ON ;
-INSERT INTO "tabanswers" ("ansId", "ansTxt", "ansQId", "ansIsValid") VALUES
+INSERT INTO `tabanswers` (`ansId`, `ansTxt`, `ansQId`, `ansIsValid`) VALUES
 (1, 'January and March', 1, 0),
 (2, 'July and August', 1, 1),
 (3, 'September and December', 1, 0),
@@ -87,23 +91,24 @@ INSERT INTO "tabanswers" ("ansId", "ansTxt", "ansQId", "ansIsValid") VALUES
 (47, 'The pinky toe phalanges ', 12, 0),
 (48, 'The big toe', 12, 1);
 
-SET IDENTITY_INSERT "tabanswers" OFF;
-
 -- --------------------------------------------------------
 
 --
--- Table structure for table "tabquestions"
+-- Table structure for table `tabquestions`
 --
 
-DROP TABLE IF EXISTS `tabquestions`;
-CREATE TABLE "tabquestions" ;
+CREATE TABLE `tabquestions` (
+  `qId` bigint(20) NOT NULL,
+  `qTxt` text COLLATE latin1_general_ci NOT NULL,
+  `qIsTaken` tinyint(1) NOT NULL,
+  `qIsAnswered` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
 
 --
--- Dumping data for table "tabquestions"
+-- Dumping data for table `tabquestions`
 --
 
-SET IDENTITY_INSERT "tabquestions" ON ;
-INSERT INTO "tabquestions" ("qId", "qTxt", "qIsTaken", "qIsAnswered") VALUES
+INSERT INTO `tabquestions` (`qId`, `qTxt`, `qIsTaken`, `qIsAnswered`) VALUES
 (1, 'Which two months are named after Roman emperors?', 0, 0),
 (2, 'What is the largest number of five digits?', 0, 0),
 (3, 'What colour to do you get when you mix red and white?', 0, 0),
@@ -117,16 +122,84 @@ INSERT INTO "tabquestions" ("qId", "qTxt", "qIsTaken", "qIsAnswered") VALUES
 (11, 'A deficiency of what vitamin may lead to dry eyes and night blindness?', 0, 0),
 (12, 'In the human body, what is the hallux?', 0, 0);
 
-SET IDENTITY_INSERT "tabquestions" OFF;
-
 -- --------------------------------------------------------
 
 --
--- Table structure for table "tabusers"
+-- Table structure for table `tabusers`
 --
 
-DROP TABLE IF EXISTS `tabusers`;
-CREATE TABLE "tabusers" ;
+CREATE TABLE `tabusers` (
+  `uId` bigint(20) NOT NULL,
+  `uIUN` text COLLATE latin1_general_ci NOT NULL,
+  `uFName` text COLLATE latin1_general_ci NOT NULL,
+  `uLName` text COLLATE latin1_general_ci NOT NULL,
+  `uRetryCount` int(11) NOT NULL,
+  `uTimer` int(11) NOT NULL,
+  `uTotalScore` int(11) NOT NULL,
+  `uIsFinished` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+
+--
+-- Dumping data for table `tabusers`
+--
+
+INSERT INTO `tabusers` (`uId`, `uIUN`, `uFName`, `uLName`, `uRetryCount`, `uTimer`, `uTotalScore`, `uIsFinished`) VALUES
+(1, 'JOHN0DOE', 'JOHN0DOE', 'JOHN0DOE', 1, 80, 8, 1);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `tabanswers`
+--
+ALTER TABLE `tabanswers`
+  ADD PRIMARY KEY (`ansId`),
+  ADD KEY `ansQId` (`ansQId`);
+
+--
+-- Indexes for table `tabquestions`
+--
+ALTER TABLE `tabquestions`
+  ADD PRIMARY KEY (`qId`);
+
+--
+-- Indexes for table `tabusers`
+--
+ALTER TABLE `tabusers`
+  ADD PRIMARY KEY (`uId`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `tabanswers`
+--
+ALTER TABLE `tabanswers`
+  MODIFY `ansId` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+
+--
+-- AUTO_INCREMENT for table `tabquestions`
+--
+ALTER TABLE `tabquestions`
+  MODIFY `qId` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT for table `tabusers`
+--
+ALTER TABLE `tabusers`
+  MODIFY `uId` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `tabanswers`
+--
+ALTER TABLE `tabanswers`
+  ADD CONSTRAINT `tabanswers_ibfk_1` FOREIGN KEY (`ansQId`) REFERENCES `tabquestions` (`qId`) ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

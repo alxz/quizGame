@@ -14,4 +14,4 @@ This is a combination of JAVASCRIPT and PHP technologies. Backend DB MySQL (Mari
 2) Configure MySQL DB access (check 'config.php' for access credentials);
 3) Copy the source files into your web application folder.
 4) Start with index.php (currently it is only 'showJS.php' file to start);
-5) Play the game.
+5) Play the game....

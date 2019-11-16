@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Nov 16, 2019 at 03:35 PM
+-- Generation Time: Nov 16, 2019 at 07:11 PM
 -- Server version: 5.7.23
 -- PHP Version: 7.0.32
 
@@ -21,8 +21,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `quizdb`
 --
-CREATE DATABASE IF NOT EXISTS `quizdb` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `quizdb`;
 
 -- --------------------------------------------------------
 

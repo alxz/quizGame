@@ -70,15 +70,26 @@ echo '<!DOCTYPE html>
 <!-- partial:index.partial.html -->
 <h1>Maze With Quizzes (test version) <a href="../../index.php" id="link" style="color: #FFFF00">... back to HOME</a>
 &nbsp;&nbsp;&nbsp; <a href="./showDBcont.php" id="link" style="color: #FFFF00">View Saved Data</a></h1>
-<p>Please enter your name: &nbsp;&nbsp;<input type="text" id="userId" value="JOHN0001" /></p>
+<div class="topRow">
+  <div id="userNameInput" class="divCurrentPos">
+      Your name: &nbsp;&nbsp;<input type="text" id="userId" value="JOHN0001" /></div>
+  <div id="currentPosDiv" class="divCurrentPos"></div>
+</div>
+<br><br>
+<div id="video"
+     class="video-container"
+     style="display: none">
+     <span class="video-close" onclick="hideVideo()"> X </span>
+     <video id="vplayer" class="video-player"
+            controls width="350">
+            <source src="video/vid00001.mp4" type="video/mp4"> Sorry, your browser doesn\'t support embedded videos.</video>
+</div>
 <div id="questionWindow" class="question-container question-hide" >
   <div class="quiz-container">
     <div id="quiz">
     </div>
   </div>
-  <!-- <button id="previous">Previous Question</button>
-       <button id="next">Next Question</button>
-  -->
+  <!-- <button id="previous">Previous Question</button> <button id="next">Next Question</button> -->
   <button id="submit">Submit Quiz</button>
 </div>
 <div class="quiz-container">
@@ -100,11 +111,10 @@ echo '<!DOCTYPE html>
 </div>
 <p>===========================================<br></p>
 <div class="mapsCont">
-  <div id="currentPosDiv" class="mazeContainerLeft"></div>
+
   <div id="mazeWDrsRmsMap" class="mazeContainerRight"></div>
   <div id="mazeMap" class="mazeContainerLeft"></div>
 </div>
-
 <p>===========================================<br></p>
 <div id="results"></div>
 <script type="text/JavaScript">var scoreData = {};</script>
@@ -115,7 +125,7 @@ echo '<!DOCTYPE html>
   <div id="mazeQeustions" class="mazeQuestions"></div>
 </div>
 <div id="divDebug"></div>
-<button id="counter">Check elapsed time</button>
+<!-- <button id="counter">Check elapsed time</button> -->
 ';
 ?>
 
@@ -143,6 +153,8 @@ echo '<!DOCTYPE html>
   //initial Rooms
   setRoom('./jpg/u0d0l0r0.jpg');
   const questionWindow = document.getElementById("questionWindow");
+  const video = document.getElementById("video");
+  const vplayer = document.getElementById("vplayer");
 
   function setRoom(image) {
     document.getElementById("divRoom").style.backgroundImage =  "url('"+ image + "')";
@@ -209,6 +221,15 @@ echo '<!DOCTYPE html>
       myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
     }
   }
+  function hideVideo() {
+    video.style.display = "none";
+    vplayer.pause();
+  }
+
+  function showVideo() {
+    video.style.display = "";
+    vplayer.play();
+}
 //==================================================
 // ===========  function myQuestion  ===============
 //==================================================
@@ -321,6 +342,7 @@ echo '<!DOCTYPE html>
                   //2 TODO: show video
                   questionWindow.style.display = "none";
                   stayInRoom(posY,posX);
+                  showVideo();
                 },1000);
               }
             });
@@ -403,7 +425,7 @@ echo '<!DOCTYPE html>
 
         function currentPos (passedY, passedX, targetDivId) {
           const displayDiv = document.getElementById(targetDivId);
-          displayDiv.innerHTML = "Current Position:<br> " + passedX + " * " + passedY + "<br>"; //currentPos
+          displayDiv.innerHTML = "Current Position: " + passedX + " * " + passedY; //currentPos
           showMaze(arrMazeInit, "mazeMap");
         }
 

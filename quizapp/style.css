@@ -111,6 +111,18 @@ button.navButton:hover{
 	text-align:center;
 	float:left;
 }
+.divCurrentPos{
+	width:40%;
+	margin:5%;
+	text-align:center;
+	float:left;
+}
+.topRow {
+	width:90%;
+	margin:1%;
+	text-align:center;
+	float:none;
+}
 .mazeContainerRight {
 	width:45%;
 	margin:1%;
@@ -172,4 +184,29 @@ tr,td {
 
 .question-hide {
 	display: none;
+}
+
+.video-container {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.71);
+	    z-index: 100;
+}
+
+.video-player {
+	margin-top: 100px;
+}
+
+.video-close {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	color: white;
+	font-size: 20px;
+	width: 30px;
+	height: 30px;
+	background-color: lightgray;
 }

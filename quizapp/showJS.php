@@ -141,12 +141,12 @@ echo '<!DOCTYPE html>
   currentPos(posX,posY,"currentPosDiv");
 
   //initial Rooms
+  setRoom('./jpg/u0d0l0r0.jpg');
+  const questionWindow = document.getElementById("questionWindow");
+
   function setRoom(image) {
     document.getElementById("divRoom").style.backgroundImage =  "url('"+ image + "')";
-
   }
-
-  setRoom('./jpg/u0d0l0r0.jpg');
 
   function changeRoom(pY,pX) {
     posX = pX;
@@ -170,48 +170,48 @@ echo '<!DOCTYPE html>
     currentPos(posY,posX,"currentPosDiv");
   }
 
-    const questionWindow = document.getElementById("questionWindow");
+  function moveRight() {
+    let newX = posX+1;
+    //let newY = posY;
+    //TODO: check if you have next question
+    // // TODO: Also check if the next room question is already answered
+    if (posX < 3) {
+      myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
+    }
+  }
 
-        function moveRight() {
-          let newX = posX+1;
-          //let newY = posY;
-          //TODO: check if you have next question
-          // // TODO: Also check if the next room question is already answered
-          if (posX < 3) {
-            myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
-          }
-        }
+  function moveLeft() {
+    let newX = posX-1;
+    //let newY = posY;
+    //TODO: check if you have next question
+    // // TODO: Also check if the next room question is already answered
+    if (posX > 0) {
+      myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
+    }
+  }
 
-        function moveLeft() {
-          let newX = posX-1;
-          //let newY = posY;
-          //TODO: check if you have next question
-          // // TODO: Also check if the next room question is already answered
-          if (posX > 0) {
-            myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
-          }
-        }
+  function moveUp() {
+    let newX = posX;
+    let newY = posY-1;
+    //TODO: check if you have next question
+    // // TODO: Also check if the next room question is already answered
+    if (posY > 0) {
+      myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
+    }
+  }
 
-        function moveUp() {
-          let newX = posX;
-          let newY = posY-1;
-          //TODO: check if you have next question
-          // // TODO: Also check if the next room question is already answered
-          if (posY > 0) {
-            myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
-          }
-        }
-
-        function moveDown() {
-          let newX = posX;
-          let newY = posY+1;
-          //TODO: check if you have next question
-          // // TODO: Also check if the next room question is already answered
-          if (posY < 3) {
-            myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
-          }
-        }
-
+  function moveDown() {
+    let newX = posX;
+    let newY = posY+1;
+    //TODO: check if you have next question
+    // // TODO: Also check if the next room question is already answered
+    if (posY < 3) {
+      myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
+    }
+  }
+//==================================================
+// ===========  function myQuestion  ===============
+//==================================================
         function myQuestion(question,newY,newX) {
           if(question.IsAnswered === 1) {
             changeRoom(newY,newX) ;
@@ -230,10 +230,7 @@ echo '<!DOCTYPE html>
 
           questionWindow.style.display = "inline-block";
           var myQuestions = [question];
-          // function shuffle(array) {
-          //   array.sort(() => Math.random() - 0.5); //randomize the list - we don't need it if already shuffled
-          // }
-          // shuffle(myQuestions);
+
           function buildQuiz() {
             // we'll need a place to store the HTML output
             const output = [];
@@ -266,6 +263,7 @@ echo '<!DOCTYPE html>
             // finally combine our output list into one string of HTML and put it on the page
             quizContainer.innerHTML = output.join("");
           }
+
           function showResults() {
             // gather answer containers from our quiz
             const answerContainers = quizContainer.querySelectorAll(".answers");
@@ -311,7 +309,7 @@ echo '<!DOCTYPE html>
                       }
                   }
                 },1000);
-                // Congratulations if this is the last room!!!
+                myQuestions = []; //myQuestions = [question];
 
                 //TODO: Change Rooms
               } else {
@@ -327,18 +325,12 @@ echo '<!DOCTYPE html>
               }
             });
 
-            //elementShowHide("result") ;
             // show number of correct answers out of total
-            //resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`; //totalQuestAsked
             resultsContainer.innerHTML = `${numCorrect} out of ${totalQuestAsked} in time elapsed: ${timeElapsedVar}`;
-            //userName = document.getElementById("userId");
-            //userName = 'user1001';
+
             userName = document.getElementById("userId").value;
             //isFinishedMaze = 0;
             timeElapsedVar = endTimer(); //fixing time elapsed
-            // if (myQuestions.length == (numCorrect)) {
-            //   isFinishedMaze = 1;
-            // }
             if (isCompleted == 1){
               isFinishedMaze = 1;
             }

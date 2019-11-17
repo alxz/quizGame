@@ -296,6 +296,7 @@ function readTable($tableName, $connStr) {
 }
 
 function displayAllTAbles() {
+  //to create a select HTML object with tables names
   $outVar = "";
     $conn = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
 
@@ -309,14 +310,42 @@ function displayAllTAbles() {
         $tables[] = $row[0];
       }
     }
-    $outVar = '<select id=\"tabsFromDB\" name=\"selectedTable\">';
+    // $outVar = '<select name=\"tabsFromDB\" onchange=\"this.form.submit();\">';
     foreach($tables as $key => $value) {
       // code...
-        $outVar = $outVar . "<option value=\'".$value."\'>".$value."</option>";
+        $outVar .= '<option value="'.$value.'">'.$value.'</option>';
     }
     //echo 'outVar: '.$outVar."<br>";
-    $outVar = $outVar . "</select>";
+    //$outVar = $outVar . "</select>";
 
 return $outVar;
+}
+
+function getUserRetriesCountFromDB($user) {
+  //to retrieve users retries from DB table - historical counts
+  $conn = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
+  $userTable = 'tabusers';
+  $userId = $user;
+  $totalCount = 0;
+  // Check connection
+  if ($conn->connect_error) {
+      die("Connection with the database failed: </br>" . $conn->connect_error);
+  }
+  //echo '<br>UserId passed: '.$userId;
+  $sql = "SELECT * FROM `$userTable` WHERE uIUN='$userId'";
+  //echo '<br>SQLSTR: '.$sql.'<br>';
+  if ($result = mysqli_query($conn,$sql)) {
+    // sqli requiest...
+    if ($result->num_rows > 0) {
+      while($row = $result->fetch_assoc()) {
+        // go over returned results
+        echo '<br>User retry found: '.$row['uRetryCount'];
+        $totalCount = $totalCount + $row['uRetryCount'];
+      }
+    }
+  }
+  // $result = $connStr->query($sql);
+  return $totalCount;
+
 }
 ?>

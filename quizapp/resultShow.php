@@ -5,6 +5,9 @@
 // $username = DBUSER;
 // $password = DBPASS;
 // $dbname = DBNAME;
+require_once('functions.php');
+require_once('classes.php');
+require_once('config.php');
 
 $servername = "localhost";
 $username = "root";
@@ -28,21 +31,24 @@ echo 'Your score: '.$resultSet[0]['correctCount'].
       '; <br>User Name: '.$resultSet[0]['user'].
       '; <br>Finished?: '.$isFinishedTxt;
 
+
 //$connVar = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
 //$conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
 // SELECT `uId`, `uIUN`, `uFName`, `uLName`, `uRetryCount`, `uTimer`, `uTotalScore`, `uIsFinished` FROM `tabUsers` WHERE 1
-$iD = '100'; //uId;
+
 $userIUN = $resultSet[0]['user']; //uIUN,
 $userFName = $resultSet[0]['user'];//uFName,
 $userLName = $resultSet[0]['user']; //uLName,
-$retyCount = 1; //uRetryCount,
+
 $timeElapsed = $resultSet[0]['elapsedTime']; // uTimer,
 $scoreTotal = $resultSet[0]['correctCount']; //uTotalScore,
 //$isFinished = 1; //uIsFinished
-
-
+$reultsCount = getUserRetriesCountFromDB($userIUN);
+echo '<br>Previous results count: '.$reultsCount;
+$retyCount = $reultsCount + 1; //uRetryCount,
 // Create connection
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+//$conn = mysqli_connect($servername, $username, $password, $dbname);
+$conn = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
 // Check connection
 if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());

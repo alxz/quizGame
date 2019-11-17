@@ -309,10 +309,10 @@ function displayAllTAbles() {
         $tables[] = $row[0];
       }
     }
-    $outVar = '<select name="tabsFromDB">';
+    $outVar = '<select id=\"tabsFromDB\" name=\"selectedTable\">';
     foreach($tables as $key => $value) {
       // code...
-        $outVar = $outVar . "<option value='".$value."'>".$value."</option>";
+        $outVar = $outVar . "<option value=\'".$value."\'>".$value."</option>";
     }
     //echo 'outVar: '.$outVar."<br>";
     $outVar = $outVar . "</select>";

@@ -3,6 +3,8 @@
 require_once('config.php');
 require_once('functions.php');
 require_once('classes.php');
+//startSession();
+
 //DBHOST, DBUSER, DBPASS, DBNAME
 //getting connection:
 $connVar = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);

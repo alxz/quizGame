@@ -103,7 +103,7 @@ function mazeQuestionsArr($mazeInit,$listQuestions) {
     $resultMaze = array();
     $roomsCount = 0;
     $jsonArr = json_decode($listQuestions);
-    //print_r($jsonArr);
+    //print_r($listQuestions);
     //echo $jsonArr[0]->question;
     foreach ($jsonArr as $key => $value) {
       // // code...
@@ -295,4 +295,28 @@ function readTable($tableName, $connStr) {
     }
 }
 
+function displayAllTAbles() {
+  $outVar = "";
+    $conn = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
+
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection with the database failed: </br>" . $conn->connect_error);
+    }
+
+    if($result = $conn->query('SHOW TABLES')){
+      while($row = $result->fetch_array()){
+        $tables[] = $row[0];
+      }
+    }
+    $outVar = '<select name="tabsFromDB">';
+    foreach($tables as $key => $value) {
+      // code...
+        $outVar = $outVar . "<option value='".$value."'>".$value."</option>";
+    }
+    //echo 'outVar: '.$outVar."<br>";
+    $outVar = $outVar . "</select>";
+
+return $outVar;
+}
 ?>

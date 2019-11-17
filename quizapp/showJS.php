@@ -1,27 +1,15 @@
 <?php
-// $servername = '127.0.0.1';
-// $username = 'root';
-// $password = '';
-// $dbname = 'quizDB';
-
 // // Create connection
-// $conn = new mysqli($servername, $username, $password, $dbname);
-// //$conn = new mysqli('localhost', 'root', '', 'quizDB');
-require_once('mySQLDataMapper.php');
 require_once('config.php');
 require_once('functions.php');
 require_once('classes.php');
-
- // $conn = mysql_connect(DBHOST, DBUSER, DBPASS) or die('Could not connect to database server.');
- // mysql_select_db(DBNAME) or die('Could not select database.');
-
 //DBHOST, DBUSER, DBPASS, DBNAME
 //getting connection:
 $connVar = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
 // reading the datatable and displaying:
 // readTable("tabQuestions",$connVar);
 $listOfAllQ = [];
-$listOfAllQ = getAllQuestions("tabQuestions",$connVar);
+$listOfAllQ = getAllQuestions("tabquestions",$connVar);
 
 $jsonListAllQ = [];
 foreach ($listOfAllQ as $question) {
@@ -46,14 +34,12 @@ foreach ($listOfAllQ as $question) {
   $arr = array ('qId'=>$qId , 'question'=>$text , 'answers'=>$jsonListAllAns, 'correctAnswer'=> $correctAns);
   $jsonListAllQ[] = $arr;
 }
-//$jsonListAllQ = shuffle($jsonListAllQ);
-// print_r($jsonListAllQ);
 shuffle($jsonListAllQ);
 // echo '<br>=====<br>';
-// print_r($jsonListAllQ);
 $mazeMapArr = mazeStruc();
-//$mazeQuestionsArr = json_encode($mazeMapArr);
 $jsonListAllQ = json_encode($jsonListAllQ);
+//print_r($jsonListAllQ);
+//echo '<br>Step before mazeQuestionsArr = mazeQuestionsArr() <br>';
 $mazeQuestionsArr = mazeQuestionsArr($mazeMapArr,$jsonListAllQ); //here we create eral Maze with Questions as Object(Text, etc)
 $mazeWithRoomsDoors = mazeRoomsDoors($mazeMapArr);
 
@@ -80,7 +66,8 @@ echo '<!DOCTYPE html>
 </head>
 <body>
 <!-- partial:index.partial.html -->
-<h1>Quiz test version <a href="../index.php" id="link" style="color: #FFFF00">... back to HOME</a></h1>
+<h1>Maze With Quizzes (test version) <a href="../../index.php" id="link" style="color: #FFFF00">... back to HOME</a>
+&nbsp;&nbsp;&nbsp; <a href="./showDBcont.php" id="link" style="color: #FFFF00">View Saved Data</a></h1>
 <p>Please enter your name: &nbsp;&nbsp;<input type="text" id="userId" value="JOHN0001" /></p>
 <div id="questionWindow" class="question-container question-hide" >
   <div class="quiz-container">

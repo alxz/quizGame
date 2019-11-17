@@ -9,7 +9,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "quizDB";
+$dbname = "quizdb";
 
 // how to access data sent using JSON
 $jsondata = file_get_contents("php://input");
@@ -48,7 +48,7 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-$sql = "INSERT INTO tabUsers (uIUN, uFName, uLName, uRetryCount, uTimer, uTotalScore, uIsFinished)
+$sql = "INSERT INTO tabusers (uIUN, uFName, uLName, uRetryCount, uTimer, uTotalScore, uIsFinished)
 VALUES ('$userIUN', '$userFName', '$userLName', $retyCount, $timeElapsed, $scoreTotal, $isFinished)";
 
 if (mysqli_query($conn, $sql)) {

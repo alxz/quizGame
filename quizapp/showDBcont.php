@@ -31,24 +31,23 @@ th, td {
 <body>
 <form method="post" action="showDBcont.php">
 <h1>Show the content of a mySQL DB
-<a href="../index.php" id="link" style="color: #FFFF00">... back to HOME</a></h1>
+<a href="../../index.php" id="link" style="color: #FFFF00">... back to HOME</a>
+&nbsp;&nbsp;&nbsp; <a href="./showJS.php" id="link" style="color: #FFFF00">Back To The Game</a></h1>
+</h1>
 <p>Please enter quizDB table name: &nbsp;<input type="text" id="tabName" value="tabquestions" name="tabName" /></p>
-<input type="submit" value="Submit Request" name="submit">
+<input type="submit" name="showdb" value="Show DB Tables">
+<input type="submit" name="submit" value="View Table">
 <div>
   <div id="dbShow"></div>
 </div>
 </form>
 <br><br>
 </body>
-<footer>
-<p><button onclick="history.go(-1);">Back </button></p>
-</footer>
-</html>'
-?>
-<?php
+</html>';
+
 function display()
 {
-  $outVar = "<br>";
+  $outVar = "";
 
     //$outVar = "Display: ".$_POST['tabName'];
     $tabName = $_POST['tabName'];
@@ -71,6 +70,7 @@ function display()
       // code...
         $outVar = $outVar . $value.'<br>';
     }
+    echo $outVar;
     //$outVar
     //create connection
     //$connection = mysqli_connect($host, $user, $pass, $db_name);
@@ -107,17 +107,78 @@ function display()
         echo '</tr>';
     }
     echo "</table>";
-    //echo $outVar;
+
+}
+
+// function showTables() {
+//   $outVar = displayAllTAbles();
+//   echo "<br> outVar: <br>".$outVar;
+//   //tabsFromDB - is select name;
+// }
 ?>
         <script type="text/JavaScript">
           var toDisplay = '<?php echo $outVar ?>';
           const resultsContainer = document.getElementById("dbShow");
           resultsContainer.innerHTML = `${toDisplay}`;
         </script>
+
 <?php
-}
+
 if(isset($_POST['submit']))
 {
    display();
 }
+if(isset($_POST['showdb']))
+{
+  $outVar = displayAllTAbles();
+  echo "<br> outVar: <br>".$outVar;
 ?>
+  <script type="text/JavaScript">
+    var toDisplay = '<?php echo $outVar ?>';
+    const resultsContainer = document.getElementById("dbShow");
+    resultsContainer.innerHTML = `${toDisplay}`;
+  </script>
+<?php
+};
+?>
+<?php
+function displayThisTable ($tableToDisplay) {
+  $outputStr = "";
+    //create connection
+    //$connection = mysqli_connect($host, $user, $pass, $db_name);
+    $connection = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
+    //test if connection failed
+    if(mysqli_connect_errno()){
+        die("connection failed: "
+            . mysqli_connect_error()
+            . " (" . mysqli_connect_errno()
+            . ")");
+    }
+    //echo '<br> ... still alive<br>';
+    //get results from database
+    $query = "SELECT * FROM ".$tableToDisplay;
+    $result = mysqli_query($connection,$query);
+    $run = $connection->query($query) or die("Last error: {$connection->error}\n");
+    $all_property = array();  //declare an array for saving property
+    //echo '<br> ... still alive<br>';
+    //showing property
+    $outputStr = '<table class="data-table" ><tr class="data-heading">';  //initialize table tag
+    $outTempStr = "";
+    while ($property = mysqli_fetch_field($result)) {
+        $outTempStr += '<td>' . $property->name . '</td>';  //get field name for header
+        array_push($all_property, $property->name);  //save those to array
+    }
+    $outputStr += $outTempStr + '</tr>'; //end tr tag
+    $outRowStr = "";
+    //showing all data
+    while ($row = mysqli_fetch_array($result)) {
+        $outRowStr +=  "<tr>";
+        $outItemStr = "";
+        foreach ($all_property as $item) {
+            $outItemStr +=  '<td>' . $row[$item] . '</td>'; //get items using property value
+        }
+        $outRowStr +=  $outItemStr + '</tr>';
+    }
+    $outputStr +=  $outRowStr + "</table>";
+}
+ ?>

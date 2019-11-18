@@ -2,6 +2,15 @@
 require_once('config.php');
 require_once('functions.php');
 //<form method="post" action="showDBcont.php">
+/*
+DB TABLES STRUCTURE:
+SELECT `uId`, `uIUN`, `uFName`, `uLName`, `uRetryCount`, `uTimer`,
+  `uTotalScore`, `uIsFinished`, `timestart`, `timefinish`, `listofquestions`,
+  `comment` FROM `tabusers`
+
+
+*/
+
 
 ?>
 <!DOCTYPE html>

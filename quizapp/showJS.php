@@ -79,7 +79,7 @@ echo '<!DOCTYPE html>
 <div id="video"
      class="video-container"
      style="display: none">
-     <span class="video-close" onclick="hideVideo()"> X </span>
+     <span class="video-close" onclick="hideVideo()"> [X] </span>
      <p><br>
         <h1><span id="vidScrTxt" class="vidScrMessage">Sorry, wrong answer!!!</span></h1>
         <br><br>
@@ -128,14 +128,14 @@ echo '<!DOCTYPE html>
 <p>===========================================<br></p>
 <div id="results"></div>
 <script type="text/JavaScript">var scoreData = {};</script>
-<p><a href="#" onclick="handleJSONData(scoreData); return false;">Click</a> to send your results.</p>
-
 <div id="result"></div>
 <div>
   <div id="mazeQeustions" class="mazeQuestions"></div>
 </div>
 <div id="divDebug"></div>
-<!-- <button id="counter">Check elapsed time</button> -->
+<!-- <button id="counter">Check elapsed time</button>
+<p><a href="#" onclick="handleJSONData(scoreData); return false;">Click</a> to send your results.</p>
+-->
 ';
 ?>
 
@@ -153,11 +153,13 @@ echo '<!DOCTYPE html>
     var timeElapsedVar = 0;
     var isFinishedMaze = 0;
     var totalQuestAsked = 0;
+    var questionsListStr = "";
+    var commentsStr = "Have a nice day!";
 
   startTimer(); //to start the timer event
   showMaze(arrMazeInit, "mazeMap");
   showMazeGfx(mazeWDrsRms, "mazeWDrsRmsMap");
-  showMazeObj(mazeQuestionsArr, "mazeQeustions");
+  //showMazeObj(mazeQuestionsArr, "mazeQeustions");
   currentPos(posY,posX,"currentPosDiv");
 
   //initial Rooms
@@ -279,6 +281,7 @@ echo '<!DOCTYPE html>
             const output = [];
             // for each question...
             myQuestions.forEach((currentQuestion, questionNumber) => {
+              questionsListStr += "q:" + currentQuestion.qId + ", ";
               // we'll want to store the list of answer choices
               const answers = [];
 
@@ -293,7 +296,6 @@ echo '<!DOCTYPE html>
                    </label>`
                 );
               }
-
               // add this question and its answers to the output
               output.push(
                 `<div class="slide">
@@ -302,7 +304,6 @@ echo '<!DOCTYPE html>
                  </div>`
               );
             });
-
             // finally combine our output list into one string of HTML and put it on the page
             quizContainer.innerHTML = output.join("");
           }
@@ -345,11 +346,15 @@ echo '<!DOCTYPE html>
                          correctCount: numCorrect,
                          user: userName,
                          isFinished: isFinishedMaze,
-                         elapsedTime: timeElapsedVar
+                         elapsedTime: timeElapsedVar,
+                         timestart: startTime,
+                         timefinish: endTime,
+                         listofquestions: questionsListStr,
+                         comments: commentsStr
                        }
                      ];
                       //alert('Congratulations!!! \nThis is the end of your journey! \nYour score will be recorded!');
-                      handleJSONData(scoreData);
+                      handleJSONData(scoreData); //to set the data setScoreData ()
                       showFinalScreen();
                       document.getElementById("finScrTxt").textContent = "Congratulations!!! "
                                     + "This is the end of your journey! "
@@ -396,7 +401,11 @@ echo '<!DOCTYPE html>
                 correctCount: numCorrect,
                 user: userName,
                 isFinished: isFinishedMaze,
-                elapsedTime: timeElapsedVar
+                elapsedTime: timeElapsedVar,
+                timestart: startTime,
+                timefinish: endTime,
+                listofquestions: questionsListStr,
+                comments: commentsStr
               }
             ];
             //numCorrect = 0;
@@ -444,7 +453,6 @@ echo '<!DOCTYPE html>
                     document.getElementById('result').innerHTML = 'An error has occurred.';
                 }
             }
-
             // arguments: url, callback object, request method, data (stringified), data type
             dw_makeXHRRequest( 'resultShow.php', callback, 'POST', JSON.stringify(data), 'application/json' );
         }
@@ -640,7 +648,11 @@ echo '<!DOCTYPE html>
                          correctCount: numCorrect,
                          user: userName,
                          isFinished: isFinishedMaze,
-                         elapsedTime: timeElapsedVar
+                         elapsedTime: timeElapsedVar,
+                         timestart: startTime,
+                         timefinish: endTime,
+                         listofquestions: questionsListStr,
+                         comments: commentsStr
                        }
                      ];
                      return currentScoreData;
@@ -694,4 +706,13 @@ function getAllQuestions($table, $connStr)
       return $listQuestions;
 }
 $connVar->close();
+
+/*
+Section for backup and temp pieces :)
+<iframe id="vmeoplayer" class="video-player"
+                  src="https://player.vimeo.com/video/303102987" width="450" height="350" frameborder="1"
+                  webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+const vmeoplayer = document.getElementById("vmeoplayer");
+*/
+
 ?>

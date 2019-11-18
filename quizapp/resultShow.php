@@ -9,6 +9,15 @@ require_once('functions.php');
 require_once('classes.php');
 require_once('config.php');
 
+/*
+DB TABLES STRUCTURE:
+SELECT `uId`, `uIUN`, `uFName`, `uLName`, `uRetryCount`, `uTimer`,
+  `uTotalScore`, `uIsFinished`, `timestart`, `timefinish`, `listofquestions`,
+  `comment` FROM `tabusers`
+
+
+*/
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -46,6 +55,12 @@ $scoreTotal = $resultSet[0]['correctCount']; //uTotalScore,
 $reultsCount = getUserRetriesCountFromDB($userIUN);
 echo '<br>Previous results count: '.$reultsCount;
 $retyCount = $reultsCount + 1; //uRetryCount,
+
+$timeStarted = $resultSet[0]['timestart']; // date+time when started. text,
+$timeFinish = $resultSet[0]['timefinish']; // date+time when finished. text,
+$listOfQuestions = $resultSet[0]['listofquestions']; //listofquestions
+$comments = $resultSet[0]['comments']; //Comments goes here
+
 // Create connection
 //$conn = mysqli_connect($servername, $username, $password, $dbname);
 $conn = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
@@ -54,11 +69,11 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-$sql = "INSERT INTO tabusers (uIUN, uFName, uLName, uRetryCount, uTimer, uTotalScore, uIsFinished)
-VALUES ('$userIUN', '$userFName', '$userLName', $retyCount, $timeElapsed, $scoreTotal, $isFinished)";
+$sql = "INSERT INTO tabusers (uIUN, uFName, uLName, uRetryCount, uTimer, uTotalScore, uIsFinished, timestart, timefinish, listofquestions, comment)
+VALUES ('$userIUN', '$userFName', '$userLName', $retyCount, $timeElapsed, $scoreTotal, $isFinished, '$timeStarted', '$timeFinish', '$listOfQuestions', '$comments')";
 
 if (mysqli_query($conn, $sql)) {
-    echo "<br> New record created successfully <br>";
+    //echo "<br> New record created successfully <br>";
 } else {
     echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 }

@@ -107,14 +107,14 @@ button.navButton:hover{
 	margin:1%;
 }
 .mazeContainerLeft {
-	width:20%;
+	/* width:20%; */
 	margin:1%;
 	text-align:center;
-	float:left;
+	float:none;
 }
 .divCurrentPos{
 	width:40%;
-	margin:5%;
+	margin:5px;
 	text-align:center;
 	float:left;
 }
@@ -125,10 +125,11 @@ button.navButton:hover{
 	float:none;
 }
 .mazeContainerRight {
-	width:45%;
+
 	margin:1%;
 	text-align:center;
-	float:left;
+	/* width:45%;
+	float:left; */
 }
 .naviTab {
 	border: 1px;

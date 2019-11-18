@@ -91,9 +91,7 @@ echo '<!DOCTYPE html>
 <div id="finScr"
      class="finScr-container"
      style="display: none">
-     <p><br><br><br>
-        <h1><span id="finScrTxt" class="finMessage">Congratulations!</span></h1>
-     </p>
+     <br><br><br><p><h1><span id="finScrTxt" class="finMessage">Congratulations!</span></h1></p>
 </div>
 <div id="questionWindow" class="question-container question-hide" >
   <div class="quiz-container">
@@ -122,10 +120,9 @@ echo '<!DOCTYPE html>
     </div>
   </div>
 </div>
+<div id="mazeWDrsRmsMap" class="mazeContainerRight"></div>
 <p>===========================================<br></p>
 <div class="mapsCont">
-
-  <div id="mazeWDrsRmsMap" class="mazeContainerRight"></div>
   <div id="mazeMap" class="mazeContainerLeft"></div>
 </div>
 <p>===========================================<br></p>
@@ -176,6 +173,7 @@ echo '<!DOCTYPE html>
   }
 
   function changeRoom(pY,pX) {
+    highlighMapPos(posY,posX,pY,pX); //to identify the position of the player and show at the map preview
     posX = pX;
     posY = pY;
     //TODO dfind new room
@@ -184,6 +182,11 @@ echo '<!DOCTYPE html>
     var imgName = 'u'+imgObj.U+'d'+imgObj.D+'l'+imgObj.L+'r'+imgObj.R;
     setRoom('./jpg/'+imgName+'.jpg');
     currentPos(posY,posX,"currentPosDiv");
+  }
+
+  function highlighMapPos(oldY,oldX,pY,pX) {
+    document.getElementById('y' + oldY + 'x' + oldX).style.border = "";
+    document.getElementById('y' + pY + 'x' + pX).style.border = "2px solid magenta";
   }
 
   function stayInRoom(pY,pX) {
@@ -517,7 +520,12 @@ echo '<!DOCTYPE html>
                     // } else {
                     //   result += '<td><img src="./jpg/'+ resultStr +'.jpg" alt="[]" height="60" width="80"></td>';
                     // }
-                    result += '<td><img src="./jpg/'+ resultStr +'.jpg" alt="[]" height="60" width="80"></td>';
+                    tabCellXId = 'y' + i + 'x' + j;
+                    result += '<td id="' + tabCellXId + '"><img src="./jpg/'+ resultStr +'.jpg" alt="[]" height="40" width="50"></td>';
+                    // if ((i === posY) && (j === posY)) {
+                    //   strShowPlayerPos = "0";
+                    //   document.getElementById("tabCellX").style.border = "thick solid #0000FF";
+                    // }
                     //result += '<td><img src="./jpg/'+ resultStr +'.jpg" alt="[]" height="60" width="80"></td>';
                     resultStr = "";
                 }

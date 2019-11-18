@@ -57,6 +57,7 @@ button.navButton{
 	padding: 20px;
 	cursor: pointer;
 	margin-bottom: 20px;
+	width: 130px;
 }
 button.navButton:hover{
 	background-color: #38a;
@@ -134,6 +135,14 @@ button.navButton:hover{
 	text-align:center;
 	margin-left:auto;
 	margin-right:auto;
+	width: 100%;
+}
+.naviTabTD {
+	border: 1px;
+	text-align:center;
+	margin-left:auto;
+	margin-right:auto;
+	width: 100%;
 }
 table#table1 {
 	text-align:center;
@@ -154,7 +163,7 @@ tr,td {
 
 #divRoom {
 	background-image: url(./jpg/u0d0l0r0.jpg);
-    width: 450px;
+    width: 480px;
     height: 350px;
 		margin-left: auto;
 		margin-right: auto;
@@ -195,9 +204,20 @@ tr,td {
 	background-color: rgba(0, 0, 0, 0.71);
 	    z-index: 100;
 }
-
+.finScr-container {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.71);
+	    z-index: 100;
+}
 .video-player {
 	margin-top: 100px;
+	padding: 5px;
+	border: 3px solid;
+	border-radius: 5% 2%;
 }
 
 .video-close {
@@ -209,4 +229,10 @@ tr,td {
 	width: 30px;
 	height: 30px;
 	background-color: lightgray;
+}
+.finMessage {
+	border: 1px;
+	color: white;
+	font-size: 30px;
+	text-align:left;
 }

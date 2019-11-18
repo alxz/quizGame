@@ -81,8 +81,15 @@ echo '<!DOCTYPE html>
      style="display: none">
      <span class="video-close" onclick="hideVideo()"> X </span>
      <video id="vplayer" class="video-player"
-            controls width="350">
+            controls width="450">
             <source src="video/vid00001.mp4" type="video/mp4"> Sorry, your browser doesn\'t support embedded videos.</video>
+</div>
+<div id="finScr"
+     class="finScr-container"
+     style="display: none">
+     <p><br><br><br>
+        <h1><span id="finScrTxt" class="finMessage">Congratulations!</span></h1>
+     </p>
 </div>
 <div id="questionWindow" class="question-container question-hide" >
   <div class="quiz-container">
@@ -96,15 +103,17 @@ echo '<!DOCTYPE html>
   <div id="divRoom">
     <div id="tableNavigation">
       <table id="navigation" class="naviTab">  <br>
-        <tr><td class="naviTab">&nbsp;</td>
-            <td class="naviTab"><button class="navButton" onclick="moveUp()"> &nbsp;&nbsp;/\&nbsp;&nbsp; </button></td>
-            <td class="naviTab">&nbsp;</td></tr>
-        <tr><td class="naviTab"><button class="navButton" onclick="moveLeft()"> &nbsp;&nbsp;<br><<<br>&nbsp;&nbsp; </button></td>
-            <td class="naviTab">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td class="naviTab"><button class="navButton" onclick="moveRight()"> &nbsp;&nbsp;<br>>><br>&nbsp;&nbsp; </button></td></tr>
-        <tr><td class="naviTab">&nbsp;</td>
-            <td class="naviTab"><button class="navButton" onclick="moveDown()"> &nbsp;&nbsp;\/&nbsp;&nbsp; </button></td>
-            <td class="naviTab">&nbsp;</td></tr>
+        <tr><td class="naviTabTD">&nbsp;</td><td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD"><button class="navButton" onclick="moveUp()"> &nbsp;&nbsp;/\&nbsp;&nbsp; </button></td>
+            <td class="naviTabTD">&nbsp;</td><td class="naviTabTD">&nbsp;</td></tr>
+        <tr><td class="naviTabTD"><button class="navButton" onclick="moveLeft()"> &nbsp;&nbsp;<br><<<br>&nbsp;&nbsp; </button></td>
+            <td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD"><button class="navButton" onclick="moveRight()"> &nbsp;&nbsp;<br>>><br>&nbsp;&nbsp; </button></td></tr>
+        <tr><td class="naviTabTD">&nbsp;</td><td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD"><button class="navButton" onclick="moveDown()"> &nbsp;&nbsp;\/&nbsp;&nbsp; </button></td>
+            <td class="naviTabTD">&nbsp;</td><td class="naviTabTD">&nbsp;</td></tr>
       </table>
     </div>
   </div>
@@ -151,10 +160,12 @@ echo '<!DOCTYPE html>
   currentPos(posX,posY,"currentPosDiv");
 
   //initial Rooms
-  setRoom('./jpg/u0d0l0r0.jpg');
+  setRoom('./jpg/u0d1l0r1.jpg');
   const questionWindow = document.getElementById("questionWindow");
   const video = document.getElementById("video");
   const vplayer = document.getElementById("vplayer");
+  const finScr = document.getElementById("finScr");
+  // finScr.style.display = "";
 
   function setRoom(image) {
     document.getElementById("divRoom").style.backgroundImage =  "url('"+ image + "')";
@@ -229,7 +240,11 @@ echo '<!DOCTYPE html>
   function showVideo() {
     video.style.display = "";
     vplayer.play();
-}
+  }
+
+  function showFinalScreen() {
+    finScr.style.display = "";
+  }
 //==================================================
 // ===========  function myQuestion  ===============
 //==================================================
@@ -322,12 +337,16 @@ echo '<!DOCTYPE html>
                          elapsedTime: timeElapsedVar
                        }
                      ];
-                      alert('Congratulations!!! \nThis is the end of your journey! \nYou won the prize!');
-                      if (confirm('Are you sure you want to save this thing into the database?')) {
-                            handleJSONData(scoreData);
-                        } else {
-                            // Do nothing!
-                      }
+                      //alert('Congratulations!!! \nThis is the end of your journey! \nYour score will be recorded!');
+                      handleJSONData(scoreData);
+                      showFinalScreen();
+                      document.getElementById("finScrTxt").textContent = "Congratulations!!! \nThis is the end of your journey! \nYour score will be recorded!";
+                      //'Congratulations!!! \nThis is the end of your journey! \nYour score will be recorded!'
+                      // if (confirm('Are you sure you want to save this thing into the database?')) {
+                      //       handleJSONData(scoreData);
+                      //   } else {
+                      //       // Do nothing!
+                      // }
                   }
                 },1000);
                 myQuestions = []; //myQuestions = [question];
@@ -480,11 +499,12 @@ echo '<!DOCTYPE html>
                       var value = obj[key];
                       resultStr += (key.toLowerCase() + value + '');
                     }
-                    if (resultStr == "u0d0l0r0") {
-                      result += '<td>&nbsp;</td>';
-                    } else {
-                      result += '<td><img src="./jpg/'+ resultStr +'.jpg" alt="[]" height="60" width="80"></td>';
-                    }
+                    // if (resultStr == "u0d0l0r0") {
+                    //   result += '<td>&nbsp;</td>';
+                    // } else {
+                    //   result += '<td><img src="./jpg/'+ resultStr +'.jpg" alt="[]" height="60" width="80"></td>';
+                    // }
+                    result += '<td><img src="./jpg/'+ resultStr +'.jpg" alt="[]" height="60" width="80"></td>';
                     //result += '<td><img src="./jpg/'+ resultStr +'.jpg" alt="[]" height="60" width="80"></td>';
                     resultStr = "";
                 }

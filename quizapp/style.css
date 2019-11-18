@@ -204,6 +204,24 @@ tr,td {
 	background-color: rgba(0, 0, 0, 0.71);
 	    z-index: 100;
 }
+.video-player {
+	margin-top: 100px;
+	padding: 15px;
+	border: 5px solid;
+	border-radius: 5% 2%;
+	border-color: red #32a1ce;
+	/*border-color: red yellow green hsla(60, 90%, 50%, .8);*/
+}
+.video-close {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	color: white;
+	font-size: 20px;
+	width: 30px;
+	height: 30px;
+	background-color: lightgray;
+}
 .finScr-container {
 	position: absolute;
 	left: 0px;
@@ -212,23 +230,6 @@ tr,td {
 	height: 100%;
 	background-color: rgba(0, 0, 0, 0.71);
 	    z-index: 100;
-}
-.video-player {
-	margin-top: 100px;
-	padding: 5px;
-	border: 3px solid;
-	border-radius: 5% 2%;
-}
-
-.video-close {
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	color: white;
-	font-size: 20px;
-	width: 30px;
-	height: 30px;
-	background-color: lightgray;
 }
 .finMessage {
 	border: 1px;

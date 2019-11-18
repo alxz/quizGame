@@ -80,6 +80,10 @@ echo '<!DOCTYPE html>
      class="video-container"
      style="display: none">
      <span class="video-close" onclick="hideVideo()"> X </span>
+     <p><br>
+        <h1><span id="vidScrTxt" class="vidScrMessage">Sorry, wrong answer!!!</span></h1>
+        <br><br>
+     </p>
      <video id="vplayer" class="video-player"
             controls width="450">
             <source src="video/vid00001.mp4" type="video/mp4"> Sorry, your browser doesn\'t support embedded videos.</video>
@@ -157,7 +161,7 @@ echo '<!DOCTYPE html>
   showMaze(arrMazeInit, "mazeMap");
   showMazeGfx(mazeWDrsRms, "mazeWDrsRmsMap");
   showMazeObj(mazeQuestionsArr, "mazeQeustions");
-  currentPos(posX,posY,"currentPosDiv");
+  currentPos(posY,posX,"currentPosDiv");
 
   //initial Rooms
   setRoom('./jpg/u0d1l0r1.jpg');
@@ -187,10 +191,10 @@ echo '<!DOCTYPE html>
     // posY = pY;
     //TODO dfind new room
     // mazeWDrsRms keeps values like: u1d1l1r1
-    var imgObj = mazeWDrsRms[posX][posY];
+    var imgObj = mazeWDrsRms[pY][pX];
     var imgName = 'u'+imgObj.U+'d'+imgObj.D+'l'+imgObj.L+'r'+imgObj.R;
     setRoom('./jpg/'+imgName+'.jpg');
-    currentPos(posY,posX,"currentPosDiv");
+    currentPos(pY,pX,"currentPosDiv");
   }
 
   function moveRight() {
@@ -315,8 +319,7 @@ echo '<!DOCTYPE html>
 
               // if answer is correct
               if (userAnswer === currentQuestion.validAnswer) {
-                // add to the number of correct answers
-                numCorrect++;
+
                 //ChangeBackgroungImageOfTab(quizContainer,"u0d0l0r0");
                 // color the answers green
                 answerContainer.style.color = "lightgreen";
@@ -325,6 +328,11 @@ echo '<!DOCTYPE html>
                   questionWindow.style.display = "none";
                   question.IsAnswered = 1;
                   changeRoom(newY,newX);
+                  // add to the number of correct answers
+                  numCorrect++;
+
+                  console.log('When Correct answer: numCorrect = ' + numCorrect + ' posY,posX: (' + posY + ',' + posX+ ') ');
+                  console.log('When Correct answer: numCorrect = ' + numCorrect + ' newY,newX: (' + newY + ',' + newX+ ') ');
                   if ((newY == 3) && (newX == 3) ) {
                       isCompleted = 1;
                       timeElapsedVar = endTimer();
@@ -340,7 +348,9 @@ echo '<!DOCTYPE html>
                       //alert('Congratulations!!! \nThis is the end of your journey! \nYour score will be recorded!');
                       handleJSONData(scoreData);
                       showFinalScreen();
-                      document.getElementById("finScrTxt").textContent = "Congratulations!!! \nThis is the end of your journey! \nYour score will be recorded!";
+                      document.getElementById("finScrTxt").textContent = "Congratulations!!! "
+                                    + "This is the end of your journey! "
+                                     + "Your score will be recorded! ";
                       //'Congratulations!!! \nThis is the end of your journey! \nYour score will be recorded!'
                       // if (confirm('Are you sure you want to save this thing into the database?')) {
                       //       handleJSONData(scoreData);
@@ -361,7 +371,10 @@ echo '<!DOCTYPE html>
                   //2 TODO: show video
                   questionWindow.style.display = "none";
                   stayInRoom(posY,posX);
+                  console.log('When wrong answer: numCorrect = ' + numCorrect + ' posY,posX: (' + posY + ',' + posX+ ') ');
+                  console.log('When wrong answer: numCorrect = ' + numCorrect + ' newY,newX: (' + newY + ',' + newX+ ') ');
                   showVideo();
+
                 },1000);
               }
             });
@@ -598,20 +611,20 @@ echo '<!DOCTYPE html>
             //console.log(seconds + " seconds");
             return seconds;
           }
-
-                    function playVideo (sourceURL) {
-                      linkToVideo = '<video controls width="350" autoplay="true"><source src="' +sourceURL
-                                +'" type="video/mp4"> Sorry, your browser doesn\'t support embedded videos.</video>';
-                      const divVideos = document.getElementById('divVideo');
-                            divVideos.innerHTML = "<br>"+linkToVideo+ "<br>";
-                            const video = document.querySelector('video');
-                          video.onended = function()  { eraseVideo();  };
-                    }
-
-                    function eraseVideo () {
-                      const divVideos = document.getElementById('divVideo');
-                            divVideos.innerHTML = "";
-                    }
+                    //
+                    // function playVideo (sourceURL) {
+                    //   linkToVideo = '<video controls width="350" autoplay="true"><source src="' +sourceURL
+                    //             +'" type="video/mp4"> Sorry, your browser doesn\'t support embedded videos.</video>';
+                    //   const divVideos = document.getElementById('divVideo');
+                    //         divVideos.innerHTML = "<br>"+linkToVideo+ "<br>";
+                    //         const video = document.querySelector('video');
+                    //       video.onended = function()  { eraseVideo();  };
+                    // }
+                    //
+                    // function eraseVideo () {
+                    //   const divVideos = document.getElementById('divVideo');
+                    //         divVideos.innerHTML = "";
+                    // }
 
                     function setScoreData () {
                       currentScoreData = [// outer level array literal

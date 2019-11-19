@@ -105,21 +105,29 @@ echo '<!DOCTYPE html>
   <div id="divRoom">
     <div id="tableNavigation">
       <table id="navigation" class="naviTab">  <br>
-        <tr><td class="naviTabTD">&nbsp;</td><td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD"><button class="navButton" onclick="moveUp()"> &nbsp;&nbsp;/\&nbsp;&nbsp; </button></td>
-            <td class="naviTabTD">&nbsp;</td><td class="naviTabTD">&nbsp;</td></tr>
-        <tr><td class="naviTabTD"><button class="navButton" onclick="moveLeft()"> &nbsp;&nbsp;<br><<<br>&nbsp;&nbsp; </button></td>
+        <tr><td class="naviTabTD">&nbsp;</td>
             <td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD"><button class="navButton" onclick="moveRight()"> &nbsp;&nbsp;<br>>><br>&nbsp;&nbsp; </button></td></tr>
-        <tr><td class="naviTabTD">&nbsp;</td><td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD"><button class="navButton" onclick="moveDown()"> &nbsp;&nbsp;\/&nbsp;&nbsp; </button></td>
-            <td class="naviTabTD">&nbsp;</td><td class="naviTabTD">&nbsp;</td></tr>
+            <td class="naviTabTD" colspan="3"><button class="navButton" onclick="moveUp()"> &nbsp;&nbsp;/\&nbsp;&nbsp; </button></td>
+            <td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD">&nbsp;</td></tr>
+        <tr><td class="naviTabTD">
+              <button class="navButton" onclick="moveLeft()">&nbsp;<br> << <br>&nbsp; <br></button>
+            </td>
+            <td class="naviTabTD" colspan="7"><canvas id="canvas"></canvas></td>
+            <td class="naviTabTD">
+              <button class="navButton" onclick="moveRight()"> &nbsp;<br> >><br>&nbsp; </button>
+            </td>
+        </tr>
+        <tr><td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD" colspan="3"><button class="navButton" onclick="moveDown()"> &nbsp;&nbsp;\/&nbsp;&nbsp; </button></td>
+            <td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD">&nbsp;</td></tr>
       </table>
-    </div>
-    <div id ="animContainer">
-      <div id ="animate"></div>
     </div>
   </div>
 </div>
@@ -158,6 +166,100 @@ echo '<!DOCTYPE html>
     var totalQuestAsked = 0;
     var questionsListStr = "";
     var commentsStr = "Have a nice day!";
+
+  // required for canvas animation:
+  {
+    var canWidth = 150;
+    var canHeight = 150;
+    // the position where the frame will be drawn
+    var x = 0;
+    var y = 0;
+    var isFaced = true;
+
+    var isMove = false;
+    var trackLeft = 1;
+    var trackRight = 0;
+
+    var srcX;
+    var srcY;
+
+    var left = false;
+    var right = true;
+    var speed = 5;
+
+    var spriteWidth = 210;
+    var spriteHeight = 80;
+
+    var cols = 7;
+    var rows = 2;
+
+    var width = spriteWidth / cols;
+    var height = spriteHeight / rows;
+
+    var currentFrame = 0;
+
+    var canvas = document.getElementById('canvas');
+    canvas.width = canWidth;
+    canvas.height = canHeight;
+    var ctx = canvas.getContext('2d');
+    var character = new Image();
+    character.src = "./png/dude.png";
+
+    function moveSpriteRight() {
+      isMove = true;
+      left = false;
+      character.src = "./png/dude.png";
+    }
+    function moveSpriteLeft() {
+      isMove = true;
+      left = true;
+      character.src = "./png/dude.png";
+    }
+
+    function justStop() {
+      isMove = false;
+      srcY = 0;
+      ctx.clearRect(x,y,width,height);
+      character.src = "./png/dudeFaceRear.png";
+      currentFrame = 0;
+      srcX = currentFrame * width;
+    }
+
+    function updateFrame() {
+      if (!isMove) {
+        currentFrame = 0;
+        return ;
+      }
+      ctx.clearRect(x,y,width,height);
+      currentFrame = ++ currentFrame % cols;
+      srcX = currentFrame * width;
+      if ((left) && (isMove) && x>0) {
+        x-=speed;
+        srcY = trackLeft * height;
+      } else if ((!left) && (isMove) && x<canWidth-width) {
+        x+=speed;
+        srcY = trackRight * height;
+      } else if (isMove && x == canWidth-width) {
+        x-=speed;
+        left = true;
+        right = false;
+      } else if (isMove && x == 0) {
+        x+=speed;
+        left = false;
+        right = true;
+      }
+    }
+
+    function drawImage() {
+      updateFrame();
+      ctx.drawImage(character, srcX, srcY, width, height, x, y, width, height);
+    }
+    setInterval(function() {
+      drawImage();
+    }, 100);
+
+    moveSpriteRight();
+  }
 
   startTimer(); //to start the timer event
   showMaze(arrMazeInit, "mazeMap");
@@ -211,10 +313,8 @@ echo '<!DOCTYPE html>
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
     if (posX < 3) {
-      setAnimImage('./png/tinyDocMario_RRun1.png');
-      //animateMove(startX, startY, stepX, stepY poleSign)
-      animateMove(250, 250, 200, 0, 1);
       myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
+      moveSpriteRight();
     }
   }
 
@@ -224,10 +324,8 @@ echo '<!DOCTYPE html>
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
     if (posX > 0) {
-      setAnimImage('./png/tinyDocMario_LRun1.png');
-      //animateMove(startX, startY, endX, endY, poleSign)
-      animateMove(250, 250, 200, 0, -1);
       myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
+      moveSpriteLeft();
     }
   }
 
@@ -237,9 +335,6 @@ echo '<!DOCTYPE html>
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
     if (posY > 0) {
-      setAnimImage('./png/tinyDocMario_URun1.png');
-      //animateMove(startX, startY, stepX, stepY poleSign)
-      animateMove(100, 250, 0, 100, -1);
       myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
     }
   }
@@ -250,9 +345,6 @@ echo '<!DOCTYPE html>
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
     if (posY < 3) {
-      setAnimImage('./png/tinyDocMario_DRun1.png');
-      //animateMove(startX, startY, stepX, stepY poleSign)
-      animateMove(100, 250, 0, 100, 1);
       myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
     }
   }
@@ -270,42 +362,42 @@ echo '<!DOCTYPE html>
     finScr.style.display = "";
   }
 
-  function animateMove(startX, startY, stepX, stepY, poleSign) {
-    var elem = document.getElementById("animate");
-    var xpos = startX;
-    var ypos = startY;
-    var id = setInterval(frame, 5);
-    function frame() {
-      if ((stepX == 0 ) && (stepY ==  0)) {
-        clearInterval(id);
-        return;
-      }
-      if ((stepX !== 0 ) && (stepY === 0)) {
-        if (xpos === (xpos + (stepX * poleSign)) ) {
-              clearInterval(id);
-            } else {
-              xpos = xpos + 1 * (poleSign);
-              elem.style.left = xpos + 'px';
-              elem.style.top = ypos;
-              stepX --;
-            }
-      }
-      if ((stepX === 0 ) && (stepY !== 0)) {
-        if (ypos === (ypos + (stepY * poleSign)) ) {
-              clearInterval(id);
-            } else {
-              ypos = ypos + 1 * (poleSign);
-              elem.style.left = xpos;
-              elem.style.top = ypos + 'px';
-              stepY --;
-            }
-      }
-    }
-  }
+  // function animateMove(startX, startY, stepX, stepY, poleSign) {
+  //   var elem = document.getElementById("animate");
+  //   var xpos = startX;
+  //   var ypos = startY;
+  //   var id = setInterval(frame, 5);
+  //   function frame() {
+  //     if ((stepX == 0 ) && (stepY ==  0)) {
+  //       clearInterval(id);
+  //       return;
+  //     }
+  //     if ((stepX !== 0 ) && (stepY === 0)) {
+  //       if (xpos === (xpos + (stepX * poleSign)) ) {
+  //             clearInterval(id);
+  //           } else {
+  //             xpos = xpos + 1 * (poleSign);
+  //             elem.style.left = xpos + 'px';
+  //             elem.style.top = ypos;
+  //             stepX --;
+  //           }
+  //     }
+  //     if ((stepX === 0 ) && (stepY !== 0)) {
+  //       if (ypos === (ypos + (stepY * poleSign)) ) {
+  //             clearInterval(id);
+  //           } else {
+  //             ypos = ypos + 1 * (poleSign);
+  //             elem.style.left = xpos;
+  //             elem.style.top = ypos + 'px';
+  //             stepY --;
+  //           }
+  //     }
+  //   }
+  // }
 
-  function setAnimImage(image) {
-    document.getElementById("animate").style.backgroundImage =  "url('"+ image + "')";
-  }
+  // function setAnimImage(image) {
+  //   document.getElementById("animate").style.backgroundImage =  "url('"+ image + "')";
+  // }
 //==================================================
 // ===========  function myQuestion  ===============
 //==================================================
@@ -324,7 +416,7 @@ echo '<!DOCTYPE html>
             changeRoom(newY,newX) ;
             return;
           }
-
+          justStop(); //stop the sprite animation
           questionWindow.style.display = "inline-block";
           var myQuestions = [question];
 
@@ -442,7 +534,7 @@ echo '<!DOCTYPE html>
 
             // show number of correct answers out of total
             resultsContainer.innerHTML = `${numCorrect} out of ${totalQuestAsked} in time elapsed: ${timeElapsedVar}`;
-
+            isMove = true; //let it moves - sprite
             userName = document.getElementById("userId").value;
             //isFinishedMaze = 0;
             timeElapsedVar = endTimer(); //fixing time elapsed

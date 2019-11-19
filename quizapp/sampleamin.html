@@ -2,9 +2,31 @@
 <html lang="en" >
 <head>
   <title>Simple animation</title>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <canvas id='canvas'></canvas>
+
+  <div id="divRoom">
+    <div id="tableNavigation">
+
+      <table id="navigation" class="naviTab">  <br>
+        <tr><td class="naviTabTD">&nbsp;</td><td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD"><button class="navButton" onclick="moveUp()"> &nbsp;&nbsp;/\&nbsp;&nbsp; </button></td>
+            <td class="naviTabTD">&nbsp;</td><td class="naviTabTD">&nbsp;</td></tr>
+        <tr><td class="naviTabTD"><button class="navButton" onclick="moveLeft()"> &nbsp;&nbsp;<br><<<br>&nbsp;&nbsp; </button></td>
+            <td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <canvas id='canvas'></canvas>
+            </td>
+            <td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD"><button class="navButton" onclick="moveRight()"> &nbsp;&nbsp;<br>>><br>&nbsp;&nbsp; </button></td></tr>
+        <tr><td class="naviTabTD">&nbsp;</td><td class="naviTabTD">&nbsp;</td>
+            <td class="naviTabTD"><button class="navButton" onclick="moveDown()"> &nbsp;&nbsp;\/&nbsp;&nbsp; </button></td>
+            <td class="naviTabTD">&nbsp;</td><td class="naviTabTD">&nbsp;</td></tr>
+      </table>
+    </div>
+
+
 
     <button onclick="moveLeft()">Left</button>
         &nbsp;

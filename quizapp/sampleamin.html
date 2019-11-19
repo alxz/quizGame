@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <title>Simple animation</title>
+</head>
+<body>
+  <canvas id='canvas'></canvas>
+
+    <button onclick="moveLeft()">Left</button>
+        &nbsp;
+  <button onclick="justStop()">Stop</button>
+        &nbsp;
+    <button onclick="moveRight()">Right</button>
+  <script>
+    var canWidth = 250;
+    var canHeight = 150;
+    // the position where the frame will be drawn
+    var x = 0;
+    var y = 0;
+    var isFaced = true;
+
+    var isMove = false;
+    var trackLeft = 1;
+    var trackRight = 0;
+
+    var srcX;
+    var srcY;
+
+    var left = false;
+		var right = true;
+    var speed = 5;
+
+    var spriteWidth = 210;
+    var spriteHeight = 80;
+
+    var cols = 7;
+    var rows = 2;
+
+    var width = spriteWidth / cols;
+    var height = spriteHeight / rows;
+
+    var currentFrame = 0;
+
+    var canvas = document.getElementById('canvas');
+    canvas.width = canWidth;
+    canvas.height = canHeight;
+    var ctx = canvas.getContext('2d');
+    var character = new Image();
+    character.src = "./png/dude.png";
+
+    function moveRight() {
+      isMove = true;
+      left = false;
+      character.src = "./png/dude.png";
+    }
+    function moveLeft() {
+      isMove = true;
+      left = true;
+      character.src = "./png/dude.png";
+    }
+
+    function justStop() {
+      isMove = false;
+      // if (!isFaced) {
+      //   srcY = 0;
+      //   isFaced = false;
+      // } else {
+      //   srcY = 1;
+      //   isFaced = true ;
+      // }
+      srcY = 0;
+      ctx.clearRect(x,y,width,height);
+      character.src = "./png/dudeFaceRear.png";
+      currentFrame = 0;
+      srcX = currentFrame * width;
+    }
+
+    function updateFrame() {
+      if (!isMove) {
+        currentFrame = 0;
+        return ;
+      }
+      ctx.clearRect(x,y,width,height);
+      currentFrame = ++ currentFrame % cols;
+      srcX = currentFrame * width;
+      if ((left) && (isMove) && x>0) {
+        x-=speed;
+        srcY = trackLeft * height;
+      } else if ((!left) && (isMove) && x<canWidth-width) {
+        x+=speed;
+        srcY = trackRight * height;
+      } else if (isMove && x == canWidth-width) {
+        x-=speed;
+        left = true;
+        right = false;
+      } else if (isMove && x == 0) {
+        x+=speed;
+        left = false;
+        right = true;
+      }
+    }
+
+    function drawImage() {
+      updateFrame();
+      ctx.drawImage(character, srcX, srcY, width, height, x, y, width, height);
+    }
+    setInterval(function() {
+      drawImage();
+    }, 100);
+
+  </script>
+</body>
+</head>

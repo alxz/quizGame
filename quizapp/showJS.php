@@ -118,6 +118,9 @@ echo '<!DOCTYPE html>
             <td class="naviTabTD">&nbsp;</td><td class="naviTabTD">&nbsp;</td></tr>
       </table>
     </div>
+    <div id ="animContainer">
+      <div id ="animate"></div>
+    </div>
   </div>
 </div>
 <div id="mazeWDrsRmsMap" class="mazeContainerRight"></div>
@@ -208,6 +211,9 @@ echo '<!DOCTYPE html>
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
     if (posX < 3) {
+      setAnimImage('./png/tinyDocMario_RRun1.png');
+      //animateMove(startX, startY, stepX, stepY poleSign)
+      animateMove(250, 250, 200, 0, 1);
       myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
     }
   }
@@ -218,6 +224,9 @@ echo '<!DOCTYPE html>
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
     if (posX > 0) {
+      setAnimImage('./png/tinyDocMario_LRun1.png');
+      //animateMove(startX, startY, endX, endY, poleSign)
+      animateMove(250, 250, 200, 0, -1);
       myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
     }
   }
@@ -228,6 +237,9 @@ echo '<!DOCTYPE html>
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
     if (posY > 0) {
+      setAnimImage('./png/tinyDocMario_URun1.png');
+      //animateMove(startX, startY, stepX, stepY poleSign)
+      animateMove(100, 250, 0, 100, -1);
       myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
     }
   }
@@ -238,6 +250,9 @@ echo '<!DOCTYPE html>
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
     if (posY < 3) {
+      setAnimImage('./png/tinyDocMario_DRun1.png');
+      //animateMove(startX, startY, stepX, stepY poleSign)
+      animateMove(100, 250, 0, 100, 1);
       myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
     }
   }
@@ -253,6 +268,43 @@ echo '<!DOCTYPE html>
 
   function showFinalScreen() {
     finScr.style.display = "";
+  }
+
+  function animateMove(startX, startY, stepX, stepY, poleSign) {
+    var elem = document.getElementById("animate");
+    var xpos = startX;
+    var ypos = startY;
+    var id = setInterval(frame, 5);
+    function frame() {
+      if ((stepX == 0 ) && (stepY ==  0)) {
+        clearInterval(id);
+        return;
+      }
+      if ((stepX !== 0 ) && (stepY === 0)) {
+        if (xpos === (xpos + (stepX * poleSign)) ) {
+              clearInterval(id);
+            } else {
+              xpos = xpos + 1 * (poleSign);
+              elem.style.left = xpos + 'px';
+              elem.style.top = ypos;
+              stepX --;
+            }
+      }
+      if ((stepX === 0 ) && (stepY !== 0)) {
+        if (ypos === (ypos + (stepY * poleSign)) ) {
+              clearInterval(id);
+            } else {
+              ypos = ypos + 1 * (poleSign);
+              elem.style.left = xpos;
+              elem.style.top = ypos + 'px';
+              stepY --;
+            }
+      }
+    }
+  }
+
+  function setAnimImage(image) {
+    document.getElementById("animate").style.backgroundImage =  "url('"+ image + "')";
   }
 //==================================================
 // ===========  function myQuestion  ===============
@@ -335,8 +387,9 @@ echo '<!DOCTYPE html>
                   // add to the number of correct answers
                   numCorrect++;
 
-                  console.log('When Correct answer: numCorrect = ' + numCorrect + ' posY,posX: (' + posY + ',' + posX+ ') ');
-                  console.log('When Correct answer: numCorrect = ' + numCorrect + ' newY,newX: (' + newY + ',' + newX+ ') ');
+                  console.log('When Correct answer: numCorrect = ' + numCorrect + ' [posY,posX: (' + posY + ',' + posX+ ')] ' +
+                                ' [newY,newX: (' + newY + ',' + newX+ ') ]');
+                  //console.log('When Correct answer: numCorrect = ' + numCorrect + ' newY,newX: (' + newY + ',' + newX+ ') ');
                   if ((newY == 3) && (newX == 3) ) {
                       isCompleted = 1;
                       timeElapsedVar = endTimer();

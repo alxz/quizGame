@@ -25,8 +25,9 @@ SELECT `uId`, `uIUN`, `uFName`, `uLName`, `uRetryCount`, `uTimer`,
 <style>
 .data-table{
 	border: 1px solid black;
-	margin: 20px;
-	padding: 20px;
+	margin: auto;
+	padding: auto;
+  width: 90%;
 }
 table {
   border-collapse: collapse;
@@ -35,6 +36,7 @@ table {
 th, td {
   padding: 8px;
   text-align: left;
+  font-size: smaller;
   border-bottom: 1px solid #ddd;
 }
 </style>
@@ -119,12 +121,7 @@ function display()
               var resultsContainer = document.getElementById('tabName');
               var selectedValue = document.getElementById('tabsFromDB').value;
               resultsContainer.value = `${selectedValue}`;
-              // if (oForm) {
-              //     oForm.submit();
-              // }
-              // else {
-              //     alert("DEBUG - could not find element " + formId);
-              // }
+
           }
         </script>
 <?php

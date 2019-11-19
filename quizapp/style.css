@@ -238,3 +238,18 @@ tr,td {
 	font-size: 30px;
 	text-align:left;
 }
+#animContainer {
+  width: 95%;
+  height: 95%;
+  position: relative;
+  background: rgba(0, 0, 0, 0.5);;
+}
+#animate {
+  width: 50px;
+  height: 80px;
+  position: relative;
+	background-size: cover; /* Resize the background image to cover the entire container */
+	background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  /* background: red; */
+}

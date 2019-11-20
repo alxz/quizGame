@@ -36,7 +36,7 @@ button{
 	color: #fff;
 	border: 0px;
 	border-radius: 3px;
-	padding: 20px;
+	padding: 10px;
 	cursor: pointer;
 	margin-bottom: 20px;
 }
@@ -54,15 +54,33 @@ button.navButton{
 	color: #fff;
 	border: 0px;
 	border-radius: 3px;
-	padding: 20px;
+	/* padding: 20px; */
 	cursor: pointer;
-	margin-bottom: 20px;
-	width: 130px;
+	margin-bottom: 10px;
+	width: 100%;
+	height: 100%;
 }
 button.navButton:hover{
 	background-color: #38a;
 }
-
+button.navButtonUpDown{
+  font-family: 'Work Sans', sans-serif;
+	font-size: 22px;
+	background-color:#323232;
+	/*Below are two new line which enable opacity*/
+	opacity: 0.2;
+	filter: alpha(opacity=90);
+	color: #fff;
+	border: 0px;
+	border-radius: 3px;
+	/* padding: 20px; */
+	cursor: pointer;
+	/* margin-bottom: 20px; */
+	width: 80%;
+}
+button.navButtonUpDown:hover{
+	background-color: #38a;
+}
 .slide{
   position: absolute;
   left: 0px;
@@ -131,7 +149,7 @@ button.navButton:hover{
 	/* width:45%;
 	float:left; */
 }
-.naviTab {
+/* .naviTab {
 	border: 1px;
 	text-align:center;
 	margin-left:auto;
@@ -144,19 +162,19 @@ button.navButton:hover{
 	margin-left:auto;
 	margin-right:auto;
 	width: 100%;
-}
+} */
 table#table1 {
 	text-align:center;
 	margin-left:auto;
 	margin-right:auto;
 	width:100px;
 }
-table#navigation {
+/* table#navigation {
  text-align:center;
  margin-left:auto;
  margin-right:auto;
  width:100px;
-}
+} */
 tr,td {
 	border: 1px;
 	text-align:left;
@@ -172,14 +190,7 @@ tr,td {
 		padding-right: auto;
     background-size: cover;
 }
-#tableNavigation {
-    width: 100%;
-    height: 350px;
-		margin-left: auto;
-		margin-right: auto;
-		padding-left: auto;
-		padding-right: auto;
-}
+
 .question-container {
 	background-color: rgba(35, 37, 36, 0.68);
 	width: 90%;
@@ -214,6 +225,7 @@ tr,td {
 	/*border-color: red yellow green hsla(60, 90%, 50%, .8);*/
 }
 .video-close {
+	cursor: pointer;
 	position: absolute;
 	top: 10px;
 	right: 10px;
@@ -253,3 +265,49 @@ tr,td {
   background-repeat: no-repeat; /* Do not repeat the image */
   /* background: red; */
 }
+
+
+		/* DivTable.com */
+		.divTable{
+			display: table;
+			width: 85%;
+			/* margin-left: auto;
+			margin-right: auto;
+			padding-left: auto;
+			padding-right: auto; */
+		}
+		.divTableRow {
+			display: table-row;
+		}
+		.divTableHeading {
+			background-color: #EEE;
+			display: table-header-group;
+		}
+		.divTableCell, .divTableHead {
+			display: table-cell;
+			/* padding: 3px 10px;
+			border: 1px solid #999999;*/
+		}
+		.divTableCellSide {
+			display: table-cell;
+			width: 10%;
+			/* padding: 3px 10px; */
+		}
+		.divTableCellCentral{
+			display: table-cell;
+			width: 80%;
+			/* padding: 3px 10px; */
+		}
+		.divTableHeading {
+			background-color: #EEE;
+			display: table-header-group;
+			font-weight: bold;
+		}
+		.divTableFoot {
+			background-color: #EEE;
+			display: table-footer-group;
+			font-weight: bold;
+		}
+		.divTableBody {
+			display: table-row-group;
+		}

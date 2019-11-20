@@ -91,44 +91,41 @@ echo '<!DOCTYPE html>
 <div id="finScr"
      class="finScr-container"
      style="display: none">
-     <br><br><br><p><h1><span id="finScrTxt" class="finMessage">Congratulations!</span></h1></p>
+     <br><br><br><p><h1><span id="finScrTxt" class="finMessage">Congratulations!</span></h1></p><br><br><br>
+     <textarea rows="4" cols="50">
+      Please enter your comments here.
+      </textarea><br><br><br>
+      <button id="finSubmit">Submit</button> &nbsp;&nbsp;&nbsp; <button id="finExit">Exit</button>
 </div>
 <div id="questionWindow" class="question-container question-hide" >
   <div class="quiz-container">
-    <div id="quiz">
-    </div>
+    <div id="quiz"></div>
   </div>
-  <!-- <button id="previous">Previous Question</button> <button id="next">Next Question</button> -->
   <button id="submit">Submit Quiz</button>
 </div>
 <div class="quiz-container">
   <div id="divRoom">
-    <div id="tableNavigation">
-      <table id="navigation" class="naviTab">  <br>
-        <tr><td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD" colspan="3"><button class="navButton" onclick="moveUp()"> &nbsp;&nbsp;/\&nbsp;&nbsp; </button></td>
-            <td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD">&nbsp;</td></tr>
-        <tr><td class="naviTabTD">
-              <button class="navButton" onclick="moveLeft()">&nbsp;<br> << <br>&nbsp; <br></button>
-            </td>
-            <td class="naviTabTD" colspan="7"><canvas id="canvas"></canvas></td>
-            <td class="naviTabTD">
-              <button class="navButton" onclick="moveRight()"> &nbsp;<br> >><br>&nbsp; </button>
-            </td>
-        </tr>
-        <tr><td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD" colspan="3"><button class="navButton" onclick="moveDown()"> &nbsp;&nbsp;\/&nbsp;&nbsp; </button></td>
-            <td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD">&nbsp;</td>
-            <td class="naviTabTD">&nbsp;</td></tr>
-      </table>
-    </div>
+    <!-- DivTable.com -->
+      <div class="divTable" style="width: 100%;" >
+        <div class="divTableBody">
+          <div class="divTableRow">
+              <div class="divTableCell">&nbsp;</div>
+              <div class="divTableCellCentral"><button class="navButtonUpDown" onclick="moveUp()">&nbsp;/\&nbsp;</button></div>
+              <div class="divTableCell">&nbsp;</div>
+          </div>
+          <div class="divTableRow">
+            <div class="divTableCellSide"><button class="navButton" onclick="moveLeft()"> <br> <br>  &nbsp; <br> <<  <br> <br> &nbsp; <br> </button></div>
+            <div class="divTableCellCentral"><br> <canvas id="canvas"></canvas></div>
+            <div class="divTableCellSide"><button class="navButton" onclick="moveRight()"> <br> <br>  &nbsp; <br> >>  <br> <br> &nbsp;<br> </button></div>
+          </div>
+          <div class="divTableRow">
+            <div class="divTableCell">&nbsp;</div>
+            <div class="divTableCellCentral"><button class="navButtonUpDown" onclick="moveDown()">&nbsp;\/&nbsp;</button></div>
+            <div class="divTableCell">&nbsp;</div></div>
+          </div>
+        </div>
+      </div>
+    <!-- DivTable.com -->
   </div>
 </div>
 <div id="mazeWDrsRmsMap" class="mazeContainerRight"></div>
@@ -138,7 +135,7 @@ echo '<!DOCTYPE html>
 </div>
 <p>===========================================<br></p>
 <div id="results"></div>
-<script type="text/JavaScript">var scoreData = {};</script>
+  <script type="text/JavaScript">var scoreData = {};</script>
 <div id="result"></div>
 <div>
   <div id="mazeQeustions" class="mazeQuestions"></div>
@@ -171,72 +168,77 @@ echo '<!DOCTYPE html>
   {
     var canWidth = 150;
     var canHeight = 150;
+    //the with and height of our spritesheet
+    var spriteWidth = 210;
+    var spriteHeight = 80;
     // the position where the frame will be drawn
-    var x = 20;
-    var y = 1;
-    var isFaced = true;
+    var x = 0;
+    var y = 0;
 
     var isMove = false;
     var trackLeft = 1;
     var trackRight = 0;
-    var trackUp = 0;
+    var trackUp = 1;
     var trackDown = 0;
 
-    var srcX;
-    var srcY;
+    var srcX; //x and y coordinates of the canvas to get the single frame
+    var srcY; //x and y coordinates of the canvas to get the single frame
 
-    var left = false;
-    var right = true;
+    var goLeft = false; //tracking the movement left and write
+    var goRight = true; //Assuming that at start the character will move right side
     var goUp = false;
     var goDown = false;
-    var speed = 5;
+    var speed = 5; //Speed of the movement
 
-    var spriteWidth = 210;
-    var spriteHeight = 80;
-
-    var cols = 7;
+    var cols = 7;//we are having 2 rows and 7 cols in the current sprite sheet
     var rows = 2;
-
+    //To get the width of a single sprite we divided the width of sprite with the number of cols
+    //because all the sprites are of equal width and height
     var width = spriteWidth / cols;
     var height = spriteHeight / rows;
-
+    //Each row contains 8 frame and at start we will display the first frame (assuming the index from 0)
     var currentFrame = 0;
+    var frameCount = 7; //The total frame is 7
 
-    var canvas = document.getElementById('canvas');
+    var canvas = document.getElementById('canvas'); //Getting the canvas from the DOM
+    //setting width and height of the canvas
     canvas.width = canWidth;
     canvas.height = canHeight;
-    var ctx = canvas.getContext('2d');
-    var character = new Image();
-    character.src = "./png/dude.png";
+    var ctx = canvas.getContext('2d'); //Establishing a context to the canvas
+    var character = new Image();  ///Creating an Image object for our character
+    character.src = "./png/dude.png"; //Setting the source to the image file
 
     function moveSpriteRight() {
       isMove = true;
-      left = false;
-      right = true;
+      goLeft = false;
+      goRight = true;
       goUp = false;
       goDown = false;
       character.src = "./png/dude.png";
     }
     function moveSpriteLeft() {
       isMove = true;
-      left = true;
-      right = false;
+      goLeft = true;
+      goRight = false;
       goUp = false;
       goDown = false;
       character.src = "./png/dude.png";
     }
 
     function moveSpriteUp() {
+      console.log('Up pressed, y = ' + y);
       isMove = true;
-      left = false;
-      right = false;
+      goLeft = false;
+      goRight = false;
       goUp = true;
       goDown = false;
       character.src = "./png/DrMarioFaceArrier7x2.png";
     }
     function moveSpriteDown() {
+      console.log('Down pressed, y = ' + y);
       isMove = true;
-      left = false;
+      goLeft = false;
+      goRight = false;
       goUp = false;
       goDown = true;
       character.src = "./png/DrMarioFaceArrier7x2.png";
@@ -252,49 +254,51 @@ echo '<!DOCTYPE html>
     }
 
     function updateFrame() {
-      if (!isMove) {
-        currentFrame = 0;
-        srcY = 0;
+      if (isMove == false) {
         return ;
       }
       ctx.clearRect(x,y,width,height);
-      currentFrame = ++ currentFrame % cols;
-      srcX = currentFrame * width;
-      if ((left) && (isMove) && x>0) {
+      currentFrame = ++ currentFrame % cols; //Updating the frame index
+      srcX = currentFrame * width; //Calculating the x coordinate for spritesheet
+
+      if ((goLeft) && x>0) {
         x-=speed;
         srcY = trackLeft * height;
-      } else if ((right) && (isMove) && x<canWidth-width) {
+      } else if ((goRight) && x<canWidth-width) {
         x+=speed;
         srcY = trackRight * height;
-      } else if (isMove && x == canWidth-width) {
-        x-=speed;
-        left = true;
-        right = false;
-      } else if (isMove && x == 0) {
-        x+=speed;
-        left = false;
-        right = true;
-      } else if ((goUp) && (isMove) && y>0) {
+      } else if ((goRight) && x == canWidth-width) {
+        //x-=speed;
+        isMove = false;
+        goLeft = false;
+        goRight = false;
+      } else if ((goLeft) && x == 0) {
+        //x+=speed;
+        isMove = false;
+        goLeft = false;
+        goRight = false;
+      } else if ((goUp) && y>0) {
         y-=speed;
-        console.log('Up pressed, y = ' + y);
-        srcY = trackLeft * height;
-      } else if ((goDown) && (isMove) && y<canHeight-height) {
+        srcY = trackUp * height;
+      } else if ((goDown) && y<canHeight-height) {
         y+=speed;
-        console.log('Down pressed, y = ' + y);
-        srcY = trackRight * height;
-      } else if (isMove && y == canHeight-height) {
-        y-=speed;
-        goUp = true;
-        goDown = false;
-      } else if (isMove && y == 0) {
-        y+=speed;
+        srcY = trackDown * height;
+      } else if (y == canHeight-height) {
+        //y-=speed;
+        isMove = false;
         goUp = false;
-        goDown = true;
+        goDown = false;
+      } else if (y == 0) {
+        //y+=speed;
+        isMove = false;
+        goUp = false;
+        goDown = false;
       }
     }
 
     function drawImage() {
-      updateFrame();
+      updateFrame(); //Updating the frame
+      //Drawing the image
       ctx.drawImage(character, srcX, srcY, width, height, x, y, width, height);
     }
     setInterval(function() {
@@ -317,7 +321,7 @@ echo '<!DOCTYPE html>
   const vplayer = document.getElementById("vplayer");
   const finScr = document.getElementById("finScr");
   // finScr.style.display = "";
-
+      highlighMapPos(1,1,0,0);
   function setRoom(image) {
     document.getElementById("divRoom").style.backgroundImage =  "url('"+ image + "')";
   }

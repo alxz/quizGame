@@ -172,19 +172,23 @@ echo '<!DOCTYPE html>
     var canWidth = 150;
     var canHeight = 150;
     // the position where the frame will be drawn
-    var x = 0;
-    var y = 0;
+    var x = 20;
+    var y = 1;
     var isFaced = true;
 
     var isMove = false;
     var trackLeft = 1;
     var trackRight = 0;
+    var trackUp = 0;
+    var trackDown = 0;
 
     var srcX;
     var srcY;
 
     var left = false;
     var right = true;
+    var goUp = false;
+    var goDown = false;
     var speed = 5;
 
     var spriteWidth = 210;
@@ -208,19 +212,41 @@ echo '<!DOCTYPE html>
     function moveSpriteRight() {
       isMove = true;
       left = false;
+      right = true;
+      goUp = false;
+      goDown = false;
       character.src = "./png/dude.png";
     }
     function moveSpriteLeft() {
       isMove = true;
       left = true;
+      right = false;
+      goUp = false;
+      goDown = false;
       character.src = "./png/dude.png";
+    }
+
+    function moveSpriteUp() {
+      isMove = true;
+      left = false;
+      right = false;
+      goUp = true;
+      goDown = false;
+      character.src = "./png/DrMarioFaceArrier7x2.png";
+    }
+    function moveSpriteDown() {
+      isMove = true;
+      left = false;
+      goUp = false;
+      goDown = true;
+      character.src = "./png/DrMarioFaceArrier7x2.png";
     }
 
     function justStop() {
       isMove = false;
       srcY = 0;
       ctx.clearRect(x,y,width,height);
-      character.src = "./png/dudeFaceRear.png";
+      character.src = "./png/DrMarioFaceArrier7x2.png"; //dudeFaceRear
       currentFrame = 0;
       srcX = currentFrame * width;
     }
@@ -228,6 +254,7 @@ echo '<!DOCTYPE html>
     function updateFrame() {
       if (!isMove) {
         currentFrame = 0;
+        srcY = 0;
         return ;
       }
       ctx.clearRect(x,y,width,height);
@@ -236,7 +263,7 @@ echo '<!DOCTYPE html>
       if ((left) && (isMove) && x>0) {
         x-=speed;
         srcY = trackLeft * height;
-      } else if ((!left) && (isMove) && x<canWidth-width) {
+      } else if ((right) && (isMove) && x<canWidth-width) {
         x+=speed;
         srcY = trackRight * height;
       } else if (isMove && x == canWidth-width) {
@@ -247,6 +274,22 @@ echo '<!DOCTYPE html>
         x+=speed;
         left = false;
         right = true;
+      } else if ((goUp) && (isMove) && y>0) {
+        y-=speed;
+        console.log('Up pressed, y = ' + y);
+        srcY = trackLeft * height;
+      } else if ((goDown) && (isMove) && y<canHeight-height) {
+        y+=speed;
+        console.log('Down pressed, y = ' + y);
+        srcY = trackRight * height;
+      } else if (isMove && y == canHeight-height) {
+        y-=speed;
+        goUp = true;
+        goDown = false;
+      } else if (isMove && y == 0) {
+        y+=speed;
+        goUp = false;
+        goDown = true;
       }
     }
 
@@ -258,7 +301,7 @@ echo '<!DOCTYPE html>
       drawImage();
     }, 100);
 
-    moveSpriteRight();
+    //moveSpriteRight();
   }
 
   startTimer(); //to start the timer event
@@ -314,6 +357,7 @@ echo '<!DOCTYPE html>
     // // TODO: Also check if the next room question is already answered
     if (posX < 3) {
       myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
+      //isMove = true;
       moveSpriteRight();
     }
   }
@@ -325,6 +369,7 @@ echo '<!DOCTYPE html>
     // // TODO: Also check if the next room question is already answered
     if (posX > 0) {
       myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
+      //isMove = true;
       moveSpriteLeft();
     }
   }
@@ -336,6 +381,7 @@ echo '<!DOCTYPE html>
     // // TODO: Also check if the next room question is already answered
     if (posY > 0) {
       myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
+      moveSpriteUp();
     }
   }
 
@@ -346,6 +392,7 @@ echo '<!DOCTYPE html>
     // // TODO: Also check if the next room question is already answered
     if (posY < 3) {
       myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
+      moveSpriteDown();
     }
   }
   function hideVideo() {
@@ -534,7 +581,7 @@ echo '<!DOCTYPE html>
 
             // show number of correct answers out of total
             resultsContainer.innerHTML = `${numCorrect} out of ${totalQuestAsked} in time elapsed: ${timeElapsedVar}`;
-            isMove = true; //let it moves - sprite
+            // isMove = true; //let it moves - sprite
             userName = document.getElementById("userId").value;
             //isFinishedMaze = 0;
             timeElapsedVar = endTimer(); //fixing time elapsed

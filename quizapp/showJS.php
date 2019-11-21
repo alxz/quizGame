@@ -95,7 +95,7 @@ echo '<!DOCTYPE html>
      <textarea rows="4" cols="50">
       Please enter your comments here.
       </textarea><br><br><br>
-      <button id="finSubmit">Submit</button> &nbsp;&nbsp;&nbsp; <button id="finExit">Exit</button>
+      <button id="finSubmit">Submit</button> &nbsp;&nbsp;&nbsp; <button id="finExit" onclick="window.close();">Exit</button>
 </div>
 <div id="questionWindow" class="question-container question-hide" >
   <div class="quiz-container">
@@ -172,8 +172,8 @@ echo '<!DOCTYPE html>
     var spriteWidth = 210;
     var spriteHeight = 80;
     // the position where the frame will be drawn
-    var x = 0;
-    var y = 0;
+    var x = canWidth / 2;
+    var y = canHeight /2;
 
     var isMove = false;
     var trackLeft = 1;
@@ -294,6 +294,14 @@ echo '<!DOCTYPE html>
         goUp = false;
         goDown = false;
       }
+    }
+
+    function resetAndClearSprite() {
+      // clear sprite:
+      ctx.clearRect(x,y,width,height);
+      // reset the x,y position coordinates:
+       x = canWidth / 2;
+       y = canHeight /2;
     }
 
     function drawImage() {
@@ -455,11 +463,13 @@ echo '<!DOCTYPE html>
         function myQuestion(question,newY,newX) {
           if(question.IsAnswered === 1) {
             changeRoom(newY,newX) ;
+            resetAndClearSprite();
             return;
           }
           if(question.qId === -1) {
             //changeRoom(newY,newX) ;
             //this room is empty - do not enter
+
             return;
           }
           if((newX == 0) && (newY == 0)) {
@@ -587,6 +597,9 @@ echo '<!DOCTYPE html>
             resultsContainer.innerHTML = `${numCorrect} out of ${totalQuestAsked} in time elapsed: ${timeElapsedVar}`;
             // isMove = true; //let it moves - sprite
             userName = document.getElementById("userId").value;
+
+            resetAndClearSprite(); //to clear and reset sprite coordinate
+
             //isFinishedMaze = 0;
             timeElapsedVar = endTimer(); //fixing time elapsed
             if (isCompleted == 1){

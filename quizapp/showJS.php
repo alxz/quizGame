@@ -1,18 +1,38 @@
 <?php
 // // Create connection
+session_start();
 require_once('config.php');
 require_once('functions.php');
 require_once('classes.php');
+
+if (!isset($_SESSION['time'])) {
+    $_SESSION['time'] = date("H:i:s");
+}
+$_SESSION['id'] = uuid();
+$sessionID = $_SESSION['id'];
+echo $_SESSION['time'];
+
+echo "<br> Session ID: ".$sessionID;
+
+
+if (isset($_POST['userId'])) {
+  $userIUN = $_POST['userId'];
+} else {
+  $userIUN = "JOHN-DOE";
+}
+// echo "<br> userIUN: ".$userIUN."<br>";
+
 //startSession();
 
 //DBHOST, DBUSER, DBPASS, DBNAME
 //getting connection:
 $connVar = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
+// new MySessionHandler($connVar);
 // reading the datatable and displaying:
 // readTable("tabQuestions",$connVar);
 $listOfAllQ = [];
 $listOfAllQ = getAllQuestions("tabquestions",$connVar);
-
+// echo sizeof($listOfAllQ); // - total amount of questions read from the DB-Table
 $jsonListAllQ = [];
 foreach ($listOfAllQ as $question) {
   // code...
@@ -39,6 +59,9 @@ foreach ($listOfAllQ as $question) {
 shuffle($jsonListAllQ);
 // echo '<br>=====<br>';
 $mazeMapArr = mazeStruc();
+      // echo 'MazeStruct SubArrays Count: '.count($mazeMapArr).'<br>'; // y- axis
+      // $counts = count(reset($mazeMapArr));
+      // echo 'MazeStruct elements per each subArray: '.$counts.'<br>'; // x - axis
 $jsonListAllQ = json_encode($jsonListAllQ);
 //print_r($jsonListAllQ);
 //echo '<br>Step before mazeQuestionsArr = mazeQuestionsArr() <br>';
@@ -68,13 +91,15 @@ echo '<!DOCTYPE html>
 </head>
 <body>
 <!-- partial:index.partial.html -->
-<h1>Maze With Quizzes (test version) <a href="../../index.php" id="link" style="color: #FFFF00">... back to HOME</a>
-&nbsp;&nbsp;&nbsp; <a href="./showDBcont.php" id="link" style="color: #FFFF00">View Saved Data</a></h1>
-<div class="topRow">
-  <div id="userNameInput" class="divCurrentPos">
-      Your name: &nbsp;&nbsp;<input type="text" id="userId" value="JOHN0001" /></div>
-  <div id="currentPosDiv" class="divCurrentPos"></div>
-</div>
+<h1>Quiz Maze Game (test) &nbsp;
+  <a href="../../index.php" id="link" style="color: #FFFF00"> HOME</a>&nbsp;&nbsp;
+  <a href="./showDBcont.php" id="link" style="color: #FFFF00">View Tables</a>&nbsp; &nbsp;
+  Welcome: &nbsp;<input type="text" id="userId" value="JOHN0001" />
+</h1>
+<div id="currentPosDiv" class="divCurrentPos"></div>
+      <!-- <div class="topRow">
+            </div>
+      -->
 <br><br>
 <div id="video"
      class="video-container"
@@ -92,10 +117,22 @@ echo '<!DOCTYPE html>
      class="finScr-container"
      style="display: none">
      <br><br><br><p><h1><span id="finScrTxt" class="finMessage">Congratulations!</span></h1></p><br><br><br>
+     <span class="finMessage">
+        1.	Did you enjoy playing an educational game as a tool for learning? <br>
+      </span>
+      <input type="text" id="finQ1" maxlength="255" value="1." /><br><br>
+     <span class="finMessage">
+        2.	What did you prefer the most and what did you like the least about it? <br>
+      </span>
+     <input type="text" id="finQ2" maxlength="255"  value="2." /><br><br>
+     <span class="finMessage">
+        3.	What would you suggest as an improvement for the future? <br>
+      </span>
+     <input type="text" id="finQ3"  maxlength="255"  value="3." /><br><br>
      <textarea rows="4" cols="50">
       Please enter your comments here.
       </textarea><br><br><br>
-      <button id="finSubmit">Submit</button> &nbsp;&nbsp;&nbsp; <button id="finExit" onclick="window.close();">Exit</button>
+      <button id="finSubmit">Submit</button> &nbsp;&nbsp;&nbsp; <button id="finExit" onclick="windowClose();">Exit</button>
 </div>
 <div id="questionWindow" class="question-container question-hide" >
   <div class="quiz-container">
@@ -146,7 +183,10 @@ echo '<!DOCTYPE html>
 -->
 ';
 ?>
-
+<script type="text/javascript">
+  var userIUN = "<?php echo $userIUN ?>"; // That's for a string
+  document.getElementById("userId").value = userIUN;
+</script>
   <script type="text/JavaScript">
   var listQuestions = <?php echo $jsonListAllQ ?>;
   var arrMazeInit = <?php echo $arrMazeInit ?>;
@@ -157,6 +197,7 @@ echo '<!DOCTYPE html>
   var posY = 0; // player position at Y-axis
   var numCorrect = 0;
     var userName = "";
+    var sessionID =  '<?php echo $sessionID ?>';
     var isCompleted = 0;
     var timeElapsedVar = 0;
     var isFinishedMaze = 0;
@@ -166,8 +207,8 @@ echo '<!DOCTYPE html>
 
   // required for canvas animation:
   {
-    var canWidth = 150;
-    var canHeight = 150;
+    var canWidth = 320;
+    var canHeight = 180;
     //the with and height of our spritesheet
     var spriteWidth = 210;
     var spriteHeight = 80;
@@ -421,40 +462,7 @@ echo '<!DOCTYPE html>
     finScr.style.display = "";
   }
 
-  // function animateMove(startX, startY, stepX, stepY, poleSign) {
-  //   var elem = document.getElementById("animate");
-  //   var xpos = startX;
-  //   var ypos = startY;
-  //   var id = setInterval(frame, 5);
-  //   function frame() {
-  //     if ((stepX == 0 ) && (stepY ==  0)) {
-  //       clearInterval(id);
-  //       return;
-  //     }
-  //     if ((stepX !== 0 ) && (stepY === 0)) {
-  //       if (xpos === (xpos + (stepX * poleSign)) ) {
-  //             clearInterval(id);
-  //           } else {
-  //             xpos = xpos + 1 * (poleSign);
-  //             elem.style.left = xpos + 'px';
-  //             elem.style.top = ypos;
-  //             stepX --;
-  //           }
-  //     }
-  //     if ((stepX === 0 ) && (stepY !== 0)) {
-  //       if (ypos === (ypos + (stepY * poleSign)) ) {
-  //             clearInterval(id);
-  //           } else {
-  //             ypos = ypos + 1 * (poleSign);
-  //             elem.style.left = xpos;
-  //             elem.style.top = ypos + 'px';
-  //             stepY --;
-  //           }
-  //     }
-  //   }
-  // }
-
-  // function setAnimImage(image) {
+    // function setAnimImage(image) {
   //   document.getElementById("animate").style.backgroundImage =  "url('"+ image + "')";
   // }
 //==================================================
@@ -556,7 +564,8 @@ echo '<!DOCTYPE html>
                          timestart: startTime,
                          timefinish: endTime,
                          listofquestions: questionsListStr,
-                         comments: commentsStr
+                         comments: commentsStr,
+                         sessionId : sessionID
                        }
                      ];
                       //alert('Congratulations!!! \nThis is the end of your journey! \nYour score will be recorded!');
@@ -614,7 +623,8 @@ echo '<!DOCTYPE html>
                 timestart: startTime,
                 timefinish: endTime,
                 listofquestions: questionsListStr,
-                comments: commentsStr
+                comments: commentsStr,
+                sessionId : sessionID
               }
             ];
             //numCorrect = 0;
@@ -836,20 +846,6 @@ echo '<!DOCTYPE html>
             //console.log(seconds + " seconds");
             return seconds;
           }
-                    //
-                    // function playVideo (sourceURL) {
-                    //   linkToVideo = '<video controls width="350" autoplay="true"><source src="' +sourceURL
-                    //             +'" type="video/mp4"> Sorry, your browser doesn\'t support embedded videos.</video>';
-                    //   const divVideos = document.getElementById('divVideo');
-                    //         divVideos.innerHTML = "<br>"+linkToVideo+ "<br>";
-                    //         const video = document.querySelector('video');
-                    //       video.onended = function()  { eraseVideo();  };
-                    // }
-                    //
-                    // function eraseVideo () {
-                    //   const divVideos = document.getElementById('divVideo');
-                    //         divVideos.innerHTML = "";
-                    // }
 
                     function setScoreData () {
                       currentScoreData = [// outer level array literal
@@ -861,7 +857,8 @@ echo '<!DOCTYPE html>
                          timestart: startTime,
                          timefinish: endTime,
                          listofquestions: questionsListStr,
-                         comments: commentsStr
+                         comments: commentsStr,
+                         sessionId : sessionID
                        }
                      ];
                      return currentScoreData;
@@ -925,3 +922,9 @@ const vmeoplayer = document.getElementById("vmeoplayer");
 */
 
 ?>
+<script language="javascript" type="text/javascript">
+function windowClose() {
+window.open('','_parent','');
+window.close();
+}
+</script>

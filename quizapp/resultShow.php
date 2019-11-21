@@ -54,12 +54,15 @@ $scoreTotal = $resultSet[0]['correctCount']; //uTotalScore,
 //$isFinished = 1; //uIsFinished
 $reultsCount = getUserRetriesCountFromDB($userIUN);
 echo '<br>Previous results count: '.$reultsCount;
+
 $retyCount = $reultsCount + 1; //uRetryCount,
 
 $timeStarted = $resultSet[0]['timestart']; // date+time when started. text,
 $timeFinish = $resultSet[0]['timefinish']; // date+time when finished. text,
 $listOfQuestions = $resultSet[0]['listofquestions']; //listofquestions
 $comments = $resultSet[0]['comments']; //Comments goes here
+$sessionId = $resultSet[0]['sessionId']; // Current Session ID
+echo '<br>Current Session ID: '.$sessionId;
 
 // Create connection
 //$conn = mysqli_connect($servername, $username, $password, $dbname);
@@ -69,8 +72,8 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 }
 
-$sql = "INSERT INTO tabusers (uIUN, uFName, uLName, uRetryCount, uTimer, uTotalScore, uIsFinished, timestart, timefinish, listofquestions, comment)
-VALUES ('$userIUN', '$userFName', '$userLName', $retyCount, $timeElapsed, $scoreTotal, $isFinished, '$timeStarted', '$timeFinish', '$listOfQuestions', '$comments')";
+$sql = "INSERT INTO tabusers (uIUN, uFName, uLName, uRetryCount, uTimer, uTotalScore, uIsFinished, timestart, timefinish, listofquestions, comment, sessionid)
+VALUES ('$userIUN', '$userFName', '$userLName', $retyCount, $timeElapsed, $scoreTotal, $isFinished, '$timeStarted', '$timeFinish', '$listOfQuestions', '$comments', '$sessionId')";
 
 if (mysqli_query($conn, $sql)) {
     //echo "<br> New record created successfully <br>";

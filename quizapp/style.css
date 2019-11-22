@@ -250,6 +250,19 @@ tr,td {
 	font-size: 30px;
 	text-align:left;
 }
+.finQuestions {
+	border: 1px;
+	color: white;
+	text-align:left;
+}
+.starStyle {
+	color: black;
+	font-size: 20px;
+}
+.starStyle:hover {
+	cursor: pointer;
+	color: yellow;
+}
 #animContainer {
   width: 95%;
   height: 95%;

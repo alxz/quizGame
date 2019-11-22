@@ -10,9 +10,9 @@ if (!isset($_SESSION['time'])) {
 }
 $_SESSION['id'] = uuid();
 $sessionID = $_SESSION['id'];
-echo $_SESSION['time'];
+//echo $_SESSION['time'];
 
-echo "<br> Session ID: ".$sessionID;
+//echo "<br> Session ID: ".$sessionID;
 
 
 if (isset($_POST['userId'])) {
@@ -83,6 +83,7 @@ echo '<!DOCTYPE html>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
   <script src="jquery-3.4.1.min.js"></script>
   <script src="js/dw_xhr.js" type="text/javascript"></script>
+  <script src="lib/easytimer.min.js" type="text/javascript"></script>
   <style>
   .myTable { background-color:#eee;border-collapse:collapse; }
   .myTable th { background-color:#000;color:white;width:50%; }
@@ -94,12 +95,17 @@ echo '<!DOCTYPE html>
 <h1>Quiz Maze Game (test) &nbsp;
   <a href="../../index.php" id="link" style="color: #FFFF00"> HOME</a>&nbsp;&nbsp;
   <a href="./showDBcont.php" id="link" style="color: #FFFF00">View Tables</a>&nbsp; &nbsp;
-  Welcome: &nbsp;<input type="text" id="userId" value="JOHN0001" />
+  Welcome: &nbsp;<input type="text" id="userId" value="JOHN0001" />&nbsp;
+  <span id="userTimer"></span>
 </h1>
+<div>
+<span class="starStyle" id="star1" onclick="star(1);">&#9733;</span>
+<span class="starStyle"  id="star2" onclick="star(2);">&#9733;</span>
+<span class="starStyle"  id="star3" onclick="star(3);">&#9733;</span>
+<span class="starStyle"  id="star4" onclick="star(4);">&#9733;</span>
+<span class="starStyle" id="star5" onclick="star(5);">&#9733;</span>
+</div>
 <div id="currentPosDiv" class="divCurrentPos"></div>
-      <!-- <div class="topRow">
-            </div>
-      -->
 <br><br>
 <div id="video"
      class="video-container"
@@ -117,19 +123,19 @@ echo '<!DOCTYPE html>
      class="finScr-container"
      style="display: none">
      <br><br><br><p><h1><span id="finScrTxt" class="finMessage">Congratulations!</span></h1></p><br><br><br>
-     <span class="finMessage">
+     <span class="finQuestions">
         1.	Did you enjoy playing an educational game as a tool for learning? <br>
       </span>
       <input type="text" id="finQ1" maxlength="255" value="1." /><br><br>
-     <span class="finMessage">
+     <span class="finQuestions">
         2.	What did you prefer the most and what did you like the least about it? <br>
       </span>
      <input type="text" id="finQ2" maxlength="255"  value="2." /><br><br>
-     <span class="finMessage">
+     <span class="finQuestions">
         3.	What would you suggest as an improvement for the future? <br>
       </span>
      <input type="text" id="finQ3"  maxlength="255"  value="3." /><br><br>
-     <textarea rows="4" cols="50">
+     <textarea id="textValue" rows="4" cols="50">
       Please enter your comments here.
       </textarea><br><br><br>
       <button id="finSubmit">Submit</button> &nbsp;&nbsp;&nbsp; <button id="finExit" onclick="windowClose();">Exit</button>
@@ -187,7 +193,34 @@ echo '<!DOCTYPE html>
   var userIUN = "<?php echo $userIUN ?>"; // That's for a string
   document.getElementById("userId").value = userIUN;
 </script>
-  <script type="text/JavaScript">
+<script type="text/javascript">
+  function star(starX) {
+    for (var i = 1; i < 6; i++) {
+      $('#star'+i).css('color', '');
+    }
+    for (var i = 1; i < starX + 1; i++) {
+      $('#star'+i).css('color', 'yellow');
+    }
+  }
+</script>
+
+<script type="text/javascript">
+  var userTimer = new easytimer.Timer();
+  var startTime = Date.now();
+  var endTime;
+  var secondsElapsed = 0;
+  userTimer.start();
+
+  userTimer.addEventListener('secondsUpdated', function (e) {
+      $('#userTimer').html(userTimer.getTimeValues().toString());
+      endTime = Date.now();
+      secondsElapsed++;
+  });
+
+</script>
+
+<script type="text/JavaScript">
+
   var listQuestions = <?php echo $jsonListAllQ ?>;
   var arrMazeInit = <?php echo $arrMazeInit ?>;
   var mazeQuestionsArr = <?php echo $mazeQuestionsArr ?>; //questions and answers JSON array
@@ -409,9 +442,10 @@ echo '<!DOCTYPE html>
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
     if (posX < 3) {
+      moveSpriteRight();
       myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
       //isMove = true;
-      moveSpriteRight();
+
     }
   }
 
@@ -421,9 +455,10 @@ echo '<!DOCTYPE html>
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
     if (posX > 0) {
+      moveSpriteLeft();
       myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
       //isMove = true;
-      moveSpriteLeft();
+
     }
   }
 
@@ -433,8 +468,9 @@ echo '<!DOCTYPE html>
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
     if (posY > 0) {
-      myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
       moveSpriteUp();
+      myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
+
     }
   }
 
@@ -444,8 +480,9 @@ echo '<!DOCTYPE html>
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
     if (posY < 3) {
-      myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
       moveSpriteDown();
+      myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
+
     }
   }
   function hideVideo() {
@@ -552,6 +589,7 @@ echo '<!DOCTYPE html>
                                 ' [newY,newX: (' + newY + ',' + newX+ ') ]');
                   //console.log('When Correct answer: numCorrect = ' + numCorrect + ' newY,newX: (' + newY + ',' + newX+ ') ');
                   if ((newY == 3) && (newX == 3) ) {
+                      userTimer.stop();
                       isCompleted = 1;
                       timeElapsedVar = endTimer();
                       isFinishedMaze = 1;

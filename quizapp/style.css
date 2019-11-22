@@ -256,7 +256,7 @@ tr,td {
 	text-align:left;
 }
 .starStyle {
-	color: black;
+	color: lightgray;
 	font-size: 20px;
 }
 .starStyle:hover {

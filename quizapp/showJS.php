@@ -23,7 +23,7 @@ if (isset($_POST['userId'])) {
 // echo "<br> userIUN: ".$userIUN."<br>";
 
 //startSession();
-
+$isSurveySent = 0;
 //DBHOST, DBUSER, DBPASS, DBNAME
 //getting connection:
 $connVar = createConnection (DBHOST, DBUSER, DBPASS, DBNAME);
@@ -78,7 +78,7 @@ echo '<!DOCTYPE html>
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>Simple JavaScript Quiz (ES6) V4 (Stylized)</title>
+  <title>Maze Game Adventure with Quiz Elements</title>
   <link rel="stylesheet" href="./style.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
   <script src="jquery-3.4.1.min.js"></script>
@@ -98,13 +98,6 @@ echo '<!DOCTYPE html>
   Welcome: &nbsp;<input type="text" id="userId" value="JOHN0001" />&nbsp;
   <span id="userTimer"></span>
 </h1>
-<div>
-<span class="starStyle" id="star1" onclick="star(1);">&#9733;</span>
-<span class="starStyle"  id="star2" onclick="star(2);">&#9733;</span>
-<span class="starStyle"  id="star3" onclick="star(3);">&#9733;</span>
-<span class="starStyle"  id="star4" onclick="star(4);">&#9733;</span>
-<span class="starStyle" id="star5" onclick="star(5);">&#9733;</span>
-</div>
 <div id="currentPosDiv" class="divCurrentPos"></div>
 <br><br>
 <div id="video"
@@ -122,23 +115,29 @@ echo '<!DOCTYPE html>
 <div id="finScr"
      class="finScr-container"
      style="display: none">
-     <br><br><br><p><h1><span id="finScrTxt" class="finMessage">Congratulations!</span></h1></p><br><br><br>
+     <br><br><p><h1><span id="finScrTxt" class="finMessage">Congratulations!</span></h1></p><br><br><br>
      <span class="finQuestions">
         1.	Did you enjoy playing an educational game as a tool for learning? <br>
+        &nbsp; &nbsp; (plaese rate your answer from 1 [min] to 5 [max]):&nbsp;
       </span>
-      <input type="text" id="finQ1" maxlength="255" value="1." /><br><br>
+      <div class="divStars">
+          <span class="starStyle" id="star1" onclick="star(1);">&#9733;</span>
+          <span class="starStyle"  id="star2" onclick="star(2);">&#9733;</span>
+          <span class="starStyle"  id="star3" onclick="star(3);">&#9733;</span>
+          <span class="starStyle"  id="star4" onclick="star(4);">&#9733;</span>
+          <span class="starStyle" id="star5" onclick="star(5);">&#9733;</span>
+      </div><br>
      <span class="finQuestions">
         2.	What did you prefer the most and what did you like the least about it? <br>
-      </span>
-     <input type="text" id="finQ2" maxlength="255"  value="2." /><br><br>
+        &nbsp; &nbsp; (plaese give us a few words... ):&nbsp;
+      </span><br>
+     <textarea id="finQ2" rows="4" cols="50" maxlength="255" ></textarea><br><br>
      <span class="finQuestions">
         3.	What would you suggest as an improvement for the future? <br>
-      </span>
-     <input type="text" id="finQ3"  maxlength="255"  value="3." /><br><br>
-     <textarea id="textValue" rows="4" cols="50">
-      Please enter your comments here.
-      </textarea><br><br><br>
-      <button id="finSubmit">Submit</button> &nbsp;&nbsp;&nbsp; <button id="finExit" onclick="windowClose();">Exit</button>
+        &nbsp; &nbsp; (plaese give us a few words... ):&nbsp;
+      </span><br>
+     <textarea id="finQ3" rows="4" cols="50" maxlength="255" ></textarea><br><br>
+      <button id="finSubmit" onclick="submitFinalAnswer();">Submit</button> &nbsp;&nbsp;&nbsp; <button id="finExit" onclick="goBack();">Exit</button>
 </div>
 <div id="questionWindow" class="question-container question-hide" >
   <div class="quiz-container">
@@ -185,7 +184,7 @@ echo '<!DOCTYPE html>
 </div>
 <div id="divDebug"></div>
 <!-- <button id="counter">Check elapsed time</button>
-<p><a href="#" onclick="handleJSONData(scoreData); return false;">Click</a> to send your results.</p>
+<p><a href="#" onclick="handleJSONData(scoreData, 1); return false;">Click</a> to send your results.</p>
 -->
 ';
 ?>
@@ -201,6 +200,34 @@ echo '<!DOCTYPE html>
     for (var i = 1; i < starX + 1; i++) {
       $('#star'+i).css('color', 'yellow');
     }
+    starsCount = starX;
+  }
+
+  function goBack() {
+    //go back in history - previous page!
+    window.history.back();
+  }
+
+  function submitFinalAnswer() {
+    //starsCount is global
+    var respQ2 = document.getElementById("finQ2").value;
+    var respQ3 = document.getElementById("finQ3").value;
+    commentsStr = "2)Likes: " + respQ2 + " 3)Suggest: " + respQ3;
+    surveyData = [
+     {
+       userIun: userIUN,
+       stars: starsCount,
+       comments: commentsStr,
+       sessionId : sessionID
+     }
+   ];
+   if (isSurveySent === 0) {
+     handleJSONData(surveyData, 2);
+     isSurveySent = true;
+   } else {
+     alert ('This survey has already been submitted! Going backwards!');
+   }
+    goBack() ; //go back to the previous page
   }
 </script>
 
@@ -220,7 +247,7 @@ echo '<!DOCTYPE html>
 </script>
 
 <script type="text/JavaScript">
-
+  var isSurveySent = <?php echo $isSurveySent ?>;
   var listQuestions = <?php echo $jsonListAllQ ?>;
   var arrMazeInit = <?php echo $arrMazeInit ?>;
   var mazeQuestionsArr = <?php echo $mazeQuestionsArr ?>; //questions and answers JSON array
@@ -229,6 +256,7 @@ echo '<!DOCTYPE html>
   var posX = 0; //player position at X-axis
   var posY = 0; // player position at Y-axis
   var numCorrect = 0;
+  var starsCount = 1;
     var userName = "";
     var sessionID =  '<?php echo $sessionID ?>';
     var isCompleted = 0;
@@ -240,14 +268,14 @@ echo '<!DOCTYPE html>
 
   // required for canvas animation:
   {
-    var canWidth = 320;
-    var canHeight = 180;
+    var canWidth = 400;
+    var canHeight = 200;
     //the with and height of our spritesheet
-    var spriteWidth = 210;
-    var spriteHeight = 80;
+    var spriteWidth = 200;
+    var spriteHeight = 200;
     // the position where the frame will be drawn
     var x = canWidth / 2;
-    var y = canHeight /2;
+    var y = canHeight ;
 
     var isMove = false;
     var trackLeft = 1;
@@ -262,9 +290,9 @@ echo '<!DOCTYPE html>
     var goRight = true; //Assuming that at start the character will move right side
     var goUp = false;
     var goDown = false;
-    var speed = 5; //Speed of the movement
+    var speed = 6; //Speed of the movement
 
-    var cols = 7;//we are having 2 rows and 7 cols in the current sprite sheet
+    var cols = 4;//we are having 2 rows and 7 cols in the current sprite sheet
     var rows = 2;
     //To get the width of a single sprite we divided the width of sprite with the number of cols
     //because all the sprites are of equal width and height
@@ -272,7 +300,7 @@ echo '<!DOCTYPE html>
     var height = spriteHeight / rows;
     //Each row contains 8 frame and at start we will display the first frame (assuming the index from 0)
     var currentFrame = 0;
-    var frameCount = 7; //The total frame is 7
+    var frameCount = 4; //The total frame is 7
 
     var canvas = document.getElementById('canvas'); //Getting the canvas from the DOM
     //setting width and height of the canvas
@@ -280,7 +308,7 @@ echo '<!DOCTYPE html>
     canvas.height = canHeight;
     var ctx = canvas.getContext('2d'); //Establishing a context to the canvas
     var character = new Image();  ///Creating an Image object for our character
-    character.src = "./png/dude.png"; //Setting the source to the image file
+    character.src = "./png/docMUHCR4L4.png"; //Setting the source to the image file
 
     function moveSpriteRight() {
       isMove = true;
@@ -288,7 +316,7 @@ echo '<!DOCTYPE html>
       goRight = true;
       goUp = false;
       goDown = false;
-      character.src = "./png/dude.png";
+      character.src = "./png/docMUHCR4L4.png";
     }
     function moveSpriteLeft() {
       isMove = true;
@@ -296,7 +324,7 @@ echo '<!DOCTYPE html>
       goRight = false;
       goUp = false;
       goDown = false;
-      character.src = "./png/dude.png";
+      character.src = "./png/docMUHCR4L4.png";
     }
 
     function moveSpriteUp() {
@@ -306,7 +334,7 @@ echo '<!DOCTYPE html>
       goRight = false;
       goUp = true;
       goDown = false;
-      character.src = "./png/DrMarioFaceArrier7x2.png";
+      character.src = "./png/docMUHCU4D4.png";
     }
     function moveSpriteDown() {
       console.log('Down pressed, y = ' + y);
@@ -315,14 +343,14 @@ echo '<!DOCTYPE html>
       goRight = false;
       goUp = false;
       goDown = true;
-      character.src = "./png/DrMarioFaceArrier7x2.png";
+      character.src = "./png/docMUHCU4D4.png";
     }
 
     function justStop() {
       isMove = false;
       srcY = 0;
       ctx.clearRect(x,y,width,height);
-      character.src = "./png/DrMarioFaceArrier7x2.png"; //dudeFaceRear
+      character.src = "./png/docMUHCU4D4.png"; //dudeFaceRear
       currentFrame = 0;
       srcX = currentFrame * width;
     }
@@ -607,7 +635,7 @@ echo '<!DOCTYPE html>
                        }
                      ];
                       //alert('Congratulations!!! \nThis is the end of your journey! \nYour score will be recorded!');
-                      handleJSONData(scoreData); //to set the data setScoreData ()
+                      handleJSONData(scoreData, 1); //to set the data setScoreData ()
                       showFinalScreen();
                       document.getElementById("finScrTxt").textContent = "Congratulations!!! "
                                     + "This is the end of your journey! "
@@ -699,7 +727,7 @@ echo '<!DOCTYPE html>
           submitButton.addEventListener("click", showResults);
         }
 
-        function handleJSONData( data ) {
+        function handleJSONData( data , destProcess ) {
 
             // callback object defines functions that handle success and failure of request
             var callback = {
@@ -710,8 +738,20 @@ echo '<!DOCTYPE html>
                     document.getElementById('result').innerHTML = 'An error has occurred.';
                 }
             }
-            // arguments: url, callback object, request method, data (stringified), data type
-            dw_makeXHRRequest( 'resultShow.php', callback, 'POST', JSON.stringify(data), 'application/json' );
+            switch (destProcess) {
+              case 1: {
+                        // arguments: url, callback object, request method, data (stringified), data type
+                        dw_makeXHRRequest( 'resultShow.php', callback, 'POST', JSON.stringify(data), 'application/json' );
+                      }
+              case 2: {
+                        dw_makeXHRRequest( 'updateSurvey.php', callback, 'POST', JSON.stringify(data), 'application/json' );
+                      }
+                break;
+              default:
+
+            }
+            // // arguments: url, callback object, request method, data (stringified), data type
+            // dw_makeXHRRequest( 'resultShow.php', callback, 'POST', JSON.stringify(data), 'application/json' );
         }
 
         function elementShowHide(elementId) {

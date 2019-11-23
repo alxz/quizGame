@@ -59,6 +59,9 @@ foreach ($listOfAllQ as $question) {
 shuffle($jsonListAllQ);
 // echo '<br>=====<br>';
 $mazeMapArr = mazeStruc();
+$maxYSize = count($mazeMapArr) - 1; //array indexes starts from 0
+$maxXSize = count(reset($mazeMapArr)) - 1;
+
       // echo 'MazeStruct SubArrays Count: '.count($mazeMapArr).'<br>'; // y- axis
       // $counts = count(reset($mazeMapArr));
       // echo 'MazeStruct elements per each subArray: '.$counts.'<br>'; // x - axis
@@ -263,6 +266,8 @@ echo '<!DOCTYPE html>
     var totalQuestAsked = 0;
     var questionsListStr = "";
     var commentsStr = "Have a nice day!";
+    var maxYSize = <?php echo $maxYSize ?>; //Max axis Y
+    var maxXSize = <?php echo $maxXSize ?>; // Max axis X
 
   // required for canvas animation:
   {
@@ -439,7 +444,7 @@ echo '<!DOCTYPE html>
   const finScr = document.getElementById("finScr");
   // finScr.style.display = "";
       highlighMapPos(1,1,0,0,"magenta");
-      highlighMapPos(1,1,3,3,"green");
+      highlighMapPos(1,1,maxYSize,maxXSize,"green");
   function setRoom(image) {
     document.getElementById("divRoom").style.backgroundImage =  "url('"+ image + "')";
   }
@@ -478,7 +483,7 @@ echo '<!DOCTYPE html>
     //let newY = posY;
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
-    if (posX < 3) {
+    if (posX < maxXSize) {
       moveSpriteRight();
       directionCode = { code: "R", y1: posY, x1:newX, y2:posY, x2:newX};
     }
@@ -509,7 +514,7 @@ echo '<!DOCTYPE html>
     let newY = posY+1;
     //TODO: check if you have next question
     // // TODO: Also check if the next room question is already answered
-    if (posY < 3) {
+    if (posY < maxYSize) {
       moveSpriteDown();
       directionCode = { code: "D", y1: newY, x1:newX, y2:newY, x2:newX};
     }
@@ -629,7 +634,7 @@ echo '<!DOCTYPE html>
                   // console.log('When Correct answer: numCorrect = ' + numCorrect + ' [posY,posX: (' + posY + ',' + posX+ ')] ' +
                   //               ' [newY,newX: (' + newY + ',' + newX+ ') ]');
                   //console.log('When Correct answer: numCorrect = ' + numCorrect + ' newY,newX: (' + newY + ',' + newX+ ') ');
-                  if ((newY == 3) && (newX == 3) ) {
+                  if ((newY == maxYSize) && (newX == maxXSize) ) {
                       userTimer.stop();
                       isCompleted = 1;
                       timeElapsedVar = endTimer();
@@ -651,7 +656,7 @@ echo '<!DOCTYPE html>
                       handleJSONData(scoreData, 1); //to set the data setScoreData ()
                       showFinalScreen();
                       document.getElementById("finScrTxt").textContent = "Congratulations!!! "
-                                    + "This is the end of your journey! "
+                                    + "You reached the destination and saved the patient! "
                                      + "Your score will be recorded! ";
                       //'Congratulations!!! \nThis is the end of your journey! \nYour score will be recorded!'
                       // if (confirm('Are you sure you want to save this thing into the database?')) {

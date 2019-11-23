@@ -302,7 +302,7 @@ echo '<!DOCTYPE html>
     var spriteHeight = 200;
     // the position where the frame will be drawn
     var x = canWidth / 2 - 25;
-    var y = canHeight /8;
+    var y = canHeight /4;
 
     var isMove = true;
     var trackLeft = 1;
@@ -433,7 +433,7 @@ echo '<!DOCTYPE html>
       ctx.clearRect(x,y,width,height);
       // reset the x,y position coordinates:
        x = canWidth /2 - 25;
-       y = canHeight /8;
+       y = canHeight /4;
        var isMove = false;
        var trackLeft = 0;
        var trackRight = 0;
@@ -863,7 +863,7 @@ echo '<!DOCTYPE html>
                       resultStr += (key.toLowerCase() + value + '');
                     }
                     tabCellXId = 'y' + i + 'x' + j;
-                    result += '<td id="' + tabCellXId + '"><img src="./jpg/'+ resultStr +'.jpg" alt="[]" height="40" width="50"></td>';
+                    result += '<td id="' + tabCellXId + '"><img src="./jpg/minimap/'+ resultStr +'.jpg" alt="[]" height="40" width="50"></td>';
                     resultStr = "";
                 }
                 result += '';

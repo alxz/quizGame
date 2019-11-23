@@ -156,9 +156,9 @@ echo '<!DOCTYPE html>
               <div class="divTableCell">&nbsp;</div>
           </div>
           <div class="divTableRow">
-            <div class="divTableCellSide"><button class="navButton" onclick="moveLeft()"> <br> <br>  &nbsp; <br> <<  <br> <br> &nbsp; <br> </button></div>
+            <div class="divTableCellSide"> <br><br> <button class="navButton" onclick="moveLeft()">&nbsp; <br><br>  <<  <br> <br> &nbsp; <br> </button></div>
             <div class="divTableCellCentral"><br> <canvas id="canvas"></canvas></div>
-            <div class="divTableCellSide"><button class="navButton" onclick="moveRight()"> <br> <br>  &nbsp; <br> >>  <br> <br> &nbsp;<br> </button></div>
+            <div class="divTableCellSide"> <br><br> <button class="navButton" onclick="moveRight()"> &nbsp; <br><br>  >>  <br> <br> &nbsp;<br> </button></div>
           </div>
           <div class="divTableRow">
             <div class="divTableCell">&nbsp;</div>
@@ -268,26 +268,28 @@ echo '<!DOCTYPE html>
 
   // required for canvas animation:
   {
-    var canWidth = 400;
-    var canHeight = 200;
+    var canWidth = 360;
+    var canHeight = 220;
     //the with and height of our spritesheet
     var spriteWidth = 200;
     var spriteHeight = 200;
     // the position where the frame will be drawn
-    var x = canWidth / 2;
-    var y = canHeight ;
+    var x = canWidth / 2 - 25;
+    var y = canHeight /8;
 
-    var isMove = false;
+    var isMove = true;
     var trackLeft = 1;
     var trackRight = 0;
     var trackUp = 1;
     var trackDown = 0;
 
+    var isAtTarget = false;
+    var directionCode = { code: "", y1: 0, x1:0, y2:0, x2:0 }; // U-D-L-R-0
     var srcX; //x and y coordinates of the canvas to get the single frame
     var srcY; //x and y coordinates of the canvas to get the single frame
 
     var goLeft = false; //tracking the movement left and write
-    var goRight = true; //Assuming that at start the character will move right side
+    var goRight = false; //Assuming that at start the character will move right side
     var goUp = false;
     var goDown = false;
     var speed = 6; //Speed of the movement
@@ -308,7 +310,9 @@ echo '<!DOCTYPE html>
     canvas.height = canHeight;
     var ctx = canvas.getContext('2d'); //Establishing a context to the canvas
     var character = new Image();  ///Creating an Image object for our character
-    character.src = "./png/docMUHCR4L4.png"; //Setting the source to the image file
+    character.src = "./png/docMUHCU4D4.png"; //Setting the source to the image file
+
+    drawImage();
 
     function moveSpriteRight() {
       isMove = true;
@@ -353,6 +357,7 @@ echo '<!DOCTYPE html>
       character.src = "./png/docMUHCU4D4.png"; //dudeFaceRear
       currentFrame = 0;
       srcX = currentFrame * width;
+      ctx.drawImage(character, srcX, srcY, width, height, x, y, width, height);
     }
 
     function updateFrame() {
@@ -366,35 +371,33 @@ echo '<!DOCTYPE html>
       if ((goLeft) && x>0) {
         x-=speed;
         srcY = trackLeft * height;
-      } else if ((goRight) && x<canWidth-width) {
+      } else if ((goRight) && (x<canWidth-width)) {
         x+=speed;
         srcY = trackRight * height;
-      } else if ((goRight) && x == canWidth-width) {
-        //x-=speed;
+      } else if ((x >= canWidth-width) || ( x <= 0)) {
+        // stop moving
         isMove = false;
         goLeft = false;
         goRight = false;
-      } else if ((goLeft) && x == 0) {
-        //x+=speed;
-        isMove = false;
-        goLeft = false;
-        goRight = false;
-      } else if ((goUp) && y>0) {
+        isAtTarget = true;
+      } else if ((goUp) && y> -20) {
         y-=speed;
         srcY = trackUp * height;
-      } else if ((goDown) && y<canHeight-height) {
+      } else if ((goDown) && (y<canHeight-height)) {
         y+=speed;
         srcY = trackDown * height;
-      } else if (y == canHeight-height) {
+      } else if ((y >= canHeight-height) || ( y <= -20)) {
         //y-=speed;
         isMove = false;
         goUp = false;
         goDown = false;
-      } else if (y == 0) {
-        //y+=speed;
-        isMove = false;
+        isAtTarget = true;
+      } else {
+        goLeft = false;
+        goRight = false;
         goUp = false;
         goDown = false;
+        justStop(); //to display a character standing
       }
     }
 
@@ -402,8 +405,13 @@ echo '<!DOCTYPE html>
       // clear sprite:
       ctx.clearRect(x,y,width,height);
       // reset the x,y position coordinates:
-       x = canWidth / 2;
-       y = canHeight /2;
+       x = canWidth /2 - 25;
+       y = canHeight /8;
+       var isMove = false;
+       var trackLeft = 0;
+       var trackRight = 0;
+       var trackUp = 0;
+       var trackDown = 0;
     }
 
     function drawImage() {
@@ -411,6 +419,7 @@ echo '<!DOCTYPE html>
       //Drawing the image
       ctx.drawImage(character, srcX, srcY, width, height, x, y, width, height);
     }
+
     setInterval(function() {
       drawImage();
     }, 100);
@@ -419,7 +428,7 @@ echo '<!DOCTYPE html>
   }
 
   startTimer(); //to start the timer event
-  showMaze(arrMazeInit, "mazeMap");
+  //showMaze(arrMazeInit, "mazeMap");
   showMazeGfx(mazeWDrsRms, "mazeWDrsRmsMap");
   //showMazeObj(mazeQuestionsArr, "mazeQeustions");
   currentPos(posY,posX,"currentPosDiv");
@@ -462,6 +471,7 @@ echo '<!DOCTYPE html>
     var imgName = 'u'+imgObj.U+'d'+imgObj.D+'l'+imgObj.L+'r'+imgObj.R;
     setRoom('./jpg/'+imgName+'.jpg');
     currentPos(pY,pX,"currentPosDiv");
+    directionCode = "0";
   }
 
   function moveRight() {
@@ -471,9 +481,11 @@ echo '<!DOCTYPE html>
     // // TODO: Also check if the next room question is already answered
     if (posX < 3) {
       moveSpriteRight();
-      myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
-      //isMove = true;
-
+      directionCode = { code: "R", y1: posY, x1:newX, y2:posY, x2:newX};
+      // if (isAtTarget) {
+      //   myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
+      //   isAtTarget = false;
+      // }
     }
   }
 
@@ -484,9 +496,11 @@ echo '<!DOCTYPE html>
     // // TODO: Also check if the next room question is already answered
     if (posX > 0) {
       moveSpriteLeft();
-      myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
-      //isMove = true;
-
+      directionCode = { code: "L", y1: posY, x1:newX, y2:posY, x2:newX};
+      // if (isAtTarget) {
+      //   myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
+      //   isAtTarget = false;
+      // }
     }
   }
 
@@ -497,8 +511,11 @@ echo '<!DOCTYPE html>
     // // TODO: Also check if the next room question is already answered
     if (posY > 0) {
       moveSpriteUp();
-      myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
-
+      directionCode = { code: "U", y1: newY, x1:newX, y2:newY, x2:newX};
+      // if (isAtTarget) {
+      //   myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
+      //   isAtTarget = false;
+      // }
     }
   }
 
@@ -509,10 +526,26 @@ echo '<!DOCTYPE html>
     // // TODO: Also check if the next room question is already answered
     if (posY < 3) {
       moveSpriteDown();
-      myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
-
+      directionCode = { code: "D", y1: newY, x1:newX, y2:newY, x2:newX};
+      // if (isAtTarget) {
+      //   myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
+      //   isAtTarget = false;
+      // }
     }
   }
+
+  setInterval(function() {
+    //directionCode
+    if (isAtTarget) {
+      y1 = directionCode.y1;
+      x1 = directionCode.x1;
+      y2 = directionCode.y2;
+      x2 = directionCode.x2;
+      myQuestion(mazeQuestionsArr[y1][x1],y2,x2);
+      isAtTarget = false;
+    }
+  }, 100);
+
   function hideVideo() {
     video.style.display = "none";
     vplayer.pause();
@@ -534,6 +567,7 @@ echo '<!DOCTYPE html>
 // ===========  function myQuestion  ===============
 //==================================================
         function myQuestion(question,newY,newX) {
+
           if(question.IsAnswered === 1) {
             changeRoom(newY,newX) ;
             resetAndClearSprite();
@@ -766,7 +800,7 @@ echo '<!DOCTYPE html>
         function currentPos (passedY, passedX, targetDivId) {
           const displayDiv = document.getElementById(targetDivId);
           displayDiv.innerHTML = "Current Position: " + passedX + " * " + passedY; //currentPos
-          showMaze(arrMazeInit, "mazeMap");
+          //showMaze(arrMazeInit, "mazeMap");
         }
 
         function showMaze (mazePassed,targetId) {

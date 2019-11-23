@@ -77,6 +77,8 @@ button.navButtonUpDown{
 	cursor: pointer;
 	/* margin-bottom: 20px; */
 	width: 80%;
+	padding: 0px;
+	margin: 10px;
 }
 button.navButtonUpDown:hover{
 	background-color: #38a;
@@ -113,8 +115,8 @@ button.navButtonUpDown:hover{
 	padding-right: auto;
 }
 .mapsCont{
-  position:relative;
-  height: 350px;
+  /* position:relative;
+  height: 350px; */
 	margin-left: auto;
 	margin-right: auto;
 	padding-left: auto;
@@ -283,7 +285,7 @@ tr,td {
 		/* DivTable.com */
 		.divTable{
 			display: table;
-			width: 85%;
+			width: 100%;
 			/* margin-left: auto;
 			margin-right: auto;
 			padding-left: auto;
@@ -304,11 +306,15 @@ tr,td {
 		.divTableCellSide {
 			display: table-cell;
 			width: 10%;
+			padding: 20px 0px;
+			margin: 20px 0px;
 			/* padding: 3px 10px; */
 		}
 		.divTableCellCentral{
 			display: table-cell;
 			width: 80%;
+			padding: 0px;
+			margin: 0px;
 			/* padding: 3px 10px; */
 		}
 		.divTableHeading {

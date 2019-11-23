@@ -193,6 +193,30 @@ echo '<!DOCTYPE html>
   var userIUN = "<?php echo $userIUN ?>"; // That's for a string
   document.getElementById("userId").value = userIUN;
 </script>
+
+<script type="text/javascript">
+    document.onkeydown = function(event) {
+        switch (event.keyCode) {
+           case 37:
+                //alert('Left key pressed');
+                moveLeft();
+              break;
+           case 38:
+                //alert('Up key pressed');
+                moveUp();
+              break;
+           case 39:
+                //alert('Right key pressed');
+                moveRight();
+              break;
+           case 40:
+                //alert('Down key pressed');
+                moveDown();
+              break;
+        }
+    };
+</script>
+
 <script type="text/javascript">
   function star(starX) {
     for (var i = 1; i < 6; i++) {

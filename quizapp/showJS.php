@@ -171,11 +171,9 @@ echo '<!DOCTYPE html>
   </div>
 </div>
 <div id="mazeWDrsRmsMap" class="mazeContainerRight"></div>
-<p>===========================================<br></p>
 <div class="mapsCont">
   <div id="mazeMap" class="mazeContainerLeft"></div>
 </div>
-<p>===========================================<br></p>
 <div id="results"></div>
   <script type="text/JavaScript">var scoreData = {};</script>
 <div id="result"></div>
@@ -332,7 +330,7 @@ echo '<!DOCTYPE html>
     }
 
     function moveSpriteUp() {
-      console.log('Up pressed, y = ' + y);
+      //console.log('Up pressed, y = ' + y);
       isMove = true;
       goLeft = false;
       goRight = false;
@@ -341,7 +339,7 @@ echo '<!DOCTYPE html>
       character.src = "./png/docMUHCU4D4.png";
     }
     function moveSpriteDown() {
-      console.log('Down pressed, y = ' + y);
+      //console.log('Down pressed, y = ' + y);
       isMove = true;
       goLeft = false;
       goRight = false;
@@ -440,13 +438,14 @@ echo '<!DOCTYPE html>
   const vplayer = document.getElementById("vplayer");
   const finScr = document.getElementById("finScr");
   // finScr.style.display = "";
-      highlighMapPos(1,1,0,0);
+      highlighMapPos(1,1,0,0,"magenta");
+      highlighMapPos(1,1,3,3,"green");
   function setRoom(image) {
     document.getElementById("divRoom").style.backgroundImage =  "url('"+ image + "')";
   }
 
   function changeRoom(pY,pX) {
-    highlighMapPos(posY,posX,pY,pX); //to identify the position of the player and show at the map preview
+    highlighMapPos(posY,posX,pY,pX,"magenta"); //to identify the position of the player and show at the map preview
     posX = pX;
     posY = pY;
     //TODO dfind new room
@@ -457,9 +456,9 @@ echo '<!DOCTYPE html>
     currentPos(posY,posX,"currentPosDiv");
   }
 
-  function highlighMapPos(oldY,oldX,pY,pX) {
+  function highlighMapPos(oldY,oldX,pY,pX,colorCode) {
     document.getElementById('y' + oldY + 'x' + oldX).style.border = "";
-    document.getElementById('y' + pY + 'x' + pX).style.border = "2px solid magenta";
+    document.getElementById('y' + pY + 'x' + pX).style.border = "2px solid " + colorCode;
   }
 
   function stayInRoom(pY,pX) {
@@ -482,25 +481,15 @@ echo '<!DOCTYPE html>
     if (posX < 3) {
       moveSpriteRight();
       directionCode = { code: "R", y1: posY, x1:newX, y2:posY, x2:newX};
-      // if (isAtTarget) {
-      //   myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
-      //   isAtTarget = false;
-      // }
     }
   }
 
   function moveLeft() {
     let newX = posX-1;
     //let newY = posY;
-    //TODO: check if you have next question
-    // // TODO: Also check if the next room question is already answered
     if (posX > 0) {
       moveSpriteLeft();
       directionCode = { code: "L", y1: posY, x1:newX, y2:posY, x2:newX};
-      // if (isAtTarget) {
-      //   myQuestion(mazeQuestionsArr[posY][newX],posY,newX);
-      //   isAtTarget = false;
-      // }
     }
   }
 
@@ -512,10 +501,6 @@ echo '<!DOCTYPE html>
     if (posY > 0) {
       moveSpriteUp();
       directionCode = { code: "U", y1: newY, x1:newX, y2:newY, x2:newX};
-      // if (isAtTarget) {
-      //   myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
-      //   isAtTarget = false;
-      // }
     }
   }
 
@@ -527,10 +512,6 @@ echo '<!DOCTYPE html>
     if (posY < 3) {
       moveSpriteDown();
       directionCode = { code: "D", y1: newY, x1:newX, y2:newY, x2:newX};
-      // if (isAtTarget) {
-      //   myQuestion(mazeQuestionsArr[newY][newX],newY,newX);
-      //   isAtTarget = false;
-      // }
     }
   }
 
@@ -560,27 +541,25 @@ echo '<!DOCTYPE html>
     finScr.style.display = "";
   }
 
-    // function setAnimImage(image) {
-  //   document.getElementById("animate").style.backgroundImage =  "url('"+ image + "')";
-  // }
 //==================================================
 // ===========  function myQuestion  ===============
 //==================================================
         function myQuestion(question,newY,newX) {
 
           if(question.IsAnswered === 1) {
-            changeRoom(newY,newX) ;
             resetAndClearSprite();
+            changeRoom(newY,newX) ;
             return;
           }
           if(question.qId === -1) {
             //changeRoom(newY,newX) ;
             //this room is empty - do not enter
-
+            //resetAndClearSprite();
             return;
           }
           if((newX == 0) && (newY == 0)) {
             // this is out start point!
+            resetAndClearSprite();
             changeRoom(newY,newX) ;
             return;
           }
@@ -647,8 +626,8 @@ echo '<!DOCTYPE html>
                   // add to the number of correct answers
                   numCorrect++;
 
-                  console.log('When Correct answer: numCorrect = ' + numCorrect + ' [posY,posX: (' + posY + ',' + posX+ ')] ' +
-                                ' [newY,newX: (' + newY + ',' + newX+ ') ]');
+                  // console.log('When Correct answer: numCorrect = ' + numCorrect + ' [posY,posX: (' + posY + ',' + posX+ ')] ' +
+                  //               ' [newY,newX: (' + newY + ',' + newX+ ') ]');
                   //console.log('When Correct answer: numCorrect = ' + numCorrect + ' newY,newX: (' + newY + ',' + newX+ ') ');
                   if ((newY == 3) && (newX == 3) ) {
                       userTimer.stop();
@@ -694,8 +673,8 @@ echo '<!DOCTYPE html>
                   //2 TODO: show video
                   questionWindow.style.display = "none";
                   stayInRoom(posY,posX);
-                  console.log('When wrong answer: numCorrect = ' + numCorrect + ' posY,posX: (' + posY + ',' + posX+ ') ');
-                  console.log('When wrong answer: numCorrect = ' + numCorrect + ' newY,newX: (' + newY + ',' + newX+ ') ');
+                  // console.log('When wrong answer: numCorrect = ' + numCorrect + ' posY,posX: (' + posY + ',' + posX+ ') ');
+                  // console.log('When wrong answer: numCorrect = ' + numCorrect + ' newY,newX: (' + newY + ',' + newX+ ') ');
                   showVideo();
 
                 },1000);
@@ -854,18 +833,8 @@ echo '<!DOCTYPE html>
                       var value = obj[key];
                       resultStr += (key.toLowerCase() + value + '');
                     }
-                    // if (resultStr == "u0d0l0r0") {
-                    //   result += '<td>&nbsp;</td>';
-                    // } else {
-                    //   result += '<td><img src="./jpg/'+ resultStr +'.jpg" alt="[]" height="60" width="80"></td>';
-                    // }
                     tabCellXId = 'y' + i + 'x' + j;
                     result += '<td id="' + tabCellXId + '"><img src="./jpg/'+ resultStr +'.jpg" alt="[]" height="40" width="50"></td>';
-                    // if ((i === posY) && (j === posY)) {
-                    //   strShowPlayerPos = "0";
-                    //   document.getElementById("tabCellX").style.border = "thick solid #0000FF";
-                    // }
-                    //result += '<td><img src="./jpg/'+ resultStr +'.jpg" alt="[]" height="60" width="80"></td>';
                     resultStr = "";
                 }
                 result += '';
@@ -915,32 +884,6 @@ echo '<!DOCTYPE html>
             result += "</table>";
             return result;
         }
-
-        //calculate time elapsed:
-          // var ts = Math.round((new Date()).getTime() / 1000);
-          // const elapsedTime = () => {
-          //   'use strict';
-          //   //const since   = 1491685200000, // Saturday, 08-Apr-17 21:00:00 UTC
-          //     const since   = ts,
-          //         elapsed = (new Date().getTime() - since) / 1000;
-          //
-          //   if (elapsed >= 0) {
-          //     const diff = {};
-          //
-          //     diff.days    = Math.floor(elapsed / 86400);
-          //     diff.hours   = Math.floor(elapsed / 3600 % 24);
-          //     diff.minutes = Math.floor(elapsed / 60 % 60);
-          //     diff.seconds = Math.floor(elapsed % 60);
-          //
-          //     let message = `Over ${diff.days}d ${diff.hours}h ${diff.minutes}m ${diff.seconds}s.`;
-          //     message = message.replace(/(?:0. )+/, '');
-          //     alert(message);
-          //   }
-          //   else {
-          //     alert('Elapsed time lesser than 0, i.e. specified datetime is still in the future.');
-          //   }
-          // };
-          // document.getElementById('counter').addEventListener('click', elapsedTime, false);
 
         //calculate time elapsed:
           function startTimer() {

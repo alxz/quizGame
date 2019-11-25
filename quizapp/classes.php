@@ -10,6 +10,7 @@ class Question {
   public $qIsAnswered;
   public $listAnswers;
   public $validAnswer;
+  public $questionURL;
 
   // Methods
   function set_qId($qId) {
@@ -51,6 +52,14 @@ class Question {
   function get_validAnswer() {
     return $this->validAnswer;
   }
+
+  function set_questionURL($questionURL) {
+    $this->questionURL = $questionURL;
+  }
+  function get_questionURL() {
+    return $this->questionURL;
+  }
+
 }
 
 class Answer {

@@ -39,6 +39,7 @@ foreach ($listOfAllQ as $question) {
   //going over a llist of questions to create a JSON array:
   $qId = $question->get_qId();
   $text = $question->get_qTxt();
+  $questionURL = $question->get_questionURL();
   $jsonListAllAns = [];
   $answers = $question->get_listAnswers();
   $ansIndex = 0;
@@ -53,7 +54,8 @@ foreach ($listOfAllQ as $question) {
       }
       $ansIndex++;
     }
-  $arr = array ('qId'=>$qId , 'question'=>$text , 'answers'=>$jsonListAllAns, 'correctAnswer'=> $correctAns);
+  $arr = array ('qId'=>$qId , 'question'=>$text , 'answers'=>$jsonListAllAns, 'correctAnswer'=> $correctAns, 'questionURL' => $questionURL);
+  //echo "<br/>".$arr['questionurl']."<br/>";
   $jsonListAllQ[] = $arr;
 }
 shuffle($jsonListAllQ);
@@ -74,7 +76,8 @@ $mazeWithRoomsDoors = mazeRoomsDoors($mazeMapArr);
 //echo $jsonListAllQ;
 $arrMazeInit = json_encode($mazeMapArr);
 $mazeQuestionsArr = json_encode($mazeQuestionsArr);
-
+// print_r($mazeQuestionsArr);
+// echo "<br/>";
 $mazeWithRoomsDoors = json_encode($mazeWithRoomsDoors);
 
 echo '<!DOCTYPE html>
@@ -97,11 +100,10 @@ echo '<!DOCTYPE html>
 <!-- partial:index.partial.html -->
 <h1>Quiz Maze Game (test) &nbsp;
   <a href="../../index.php" id="link" style="color: #FFFF00"> HOME</a>&nbsp;&nbsp;
-  <a href="./showDBcont.php" id="link" style="color: #FFFF00">View Tables</a>&nbsp; &nbsp;
-  Welcome: &nbsp;<input type="text" id="userId" value="JOHN0001" />&nbsp;
+  &nbsp;<input type="hidden" id="userId" value="" />&nbsp;
   <span id="userTimer"></span>
 </h1>
-<div id="currentPosDiv" class="divCurrentPos"></div>
+<!-- <div id="currentPosDiv" class="divCurrentPos"></div> -->
 <br><br>
 <div id="video"
      class="video-container"
@@ -109,16 +111,23 @@ echo '<!DOCTYPE html>
      <span class="video-close" onclick="hideVideo()"> [X] </span>
      <p><br>
         <h1><span id="vidScrTxt" class="vidScrMessage">Sorry, wrong answer!!!</span></h1>
+        <h3><span id="vidScrTxt" class="vidScrMessage">You will have to watch the video to find the right answer:</span></h3>
         <br><br>
      </p>
-     <video id="vplayer" class="video-player"
-            controls width="450">
-            <source src="video/vid00001.mp4" type="video/mp4"> Sorry, your browser doesn\'t support embedded videos.</video>
+     <div id="divVidPlayer">
+        <video id="vplayer" class="video-player" controls width="450">
+            <!-- <source src="video/vid00001.mp4" type="video/mp4"> Sorry, your browser doesn\'t support embedded videos.</video> -->
+     </div>
 </div>
 <div id="finScr"
      class="finScr-container"
      style="display: none">
-     <br><br><p><h1><span id="finScrTxt" class="finMessage">Congratulations!</span></h1></p><br><br><br>
+     <br><br>
+      <p><h3><span id="finScrTxtLine1" class="finMessage">Congratulations!</span></h3></p>
+      <p><h3><span id="finScrTxtLine2" class="finMessage"></span></h3></p>
+      <p><h3><span id="finScrTxtLine3" class="finMessage"></span></h3></p>
+      <p><h3><span id="finScrTxtLine4" class="finMessage"></span></h3></p>
+     <br>
      <span class="finQuestions">
         1.	Did you enjoy playing an educational game as a tool for learning? <br>
         &nbsp; &nbsp; (plaese rate your answer from 1 [min] to 5 [max]):&nbsp;
@@ -133,14 +142,15 @@ echo '<!DOCTYPE html>
      <span class="finQuestions">
         2.	What did you prefer the most and what did you like the least about it? <br>
         &nbsp; &nbsp; (plaese give us a few words... ):&nbsp;
-      </span><br>
+      </span><br><br>
      <textarea id="finQ2" rows="4" cols="50" maxlength="255" ></textarea><br><br>
      <span class="finQuestions">
         3.	What would you suggest as an improvement for the future? <br>
         &nbsp; &nbsp; (plaese give us a few words... ):&nbsp;
-      </span><br>
+      </span><br><br>
      <textarea id="finQ3" rows="4" cols="50" maxlength="255" ></textarea><br><br>
-      <button id="finSubmit" onclick="submitFinalAnswer();">Submit</button> &nbsp;&nbsp;&nbsp; <button id="finExit" onclick="goBack();">Exit</button>
+      <button id="finSubmit" onclick="submitFinalAnswer();">Submit</button> &nbsp;&nbsp;&nbsp;
+      <button id="finExit" onclick="goBack();">Exit</button>
 </div>
 <div id="questionWindow" class="question-container question-hide" >
   <div class="quiz-container">
@@ -184,9 +194,6 @@ echo '<!DOCTYPE html>
   <div id="mazeQeustions" class="mazeQuestions"></div>
 </div>
 <div id="divDebug"></div>
-<!-- <button id="counter">Check elapsed time</button>
-<p><a href="#" onclick="handleJSONData(scoreData, 1); return false;">Click</a> to send your results.</p>
--->
 ';
 ?>
 <script type="text/javascript">
@@ -249,6 +256,7 @@ echo '<!DOCTYPE html>
    if (isSurveySent === 0) {
      handleJSONData(surveyData, 2);
      isSurveySent = true;
+     alert ('The survey has been submitted! Thanks for your opinion!');
    } else {
      alert ('This survey has already been submitted! Going backwards!');
    }
@@ -458,7 +466,7 @@ echo '<!DOCTYPE html>
   //showMaze(arrMazeInit, "mazeMap");
   showMazeGfx(mazeWDrsRms, "mazeWDrsRmsMap");
   //showMazeObj(mazeQuestionsArr, "mazeQeustions");
-  currentPos(posY,posX,"currentPosDiv");
+  // currentPos(posY,posX,"currentPosDiv");
 
   //initial Rooms
   setRoom('./jpg/u0d1l0r1.jpg');
@@ -482,7 +490,7 @@ echo '<!DOCTYPE html>
     var imgObj = mazeWDrsRms[posY][posX];
     var imgName = 'u'+imgObj.U+'d'+imgObj.D+'l'+imgObj.L+'r'+imgObj.R;
     setRoom('./jpg/'+imgName+'.jpg');
-    currentPos(posY,posX,"currentPosDiv");
+    // currentPos(posY,posX,"currentPosDiv");
   }
 
   function highlighMapPos(oldY,oldX,pY,pX,colorCode) {
@@ -498,7 +506,7 @@ echo '<!DOCTYPE html>
     var imgObj = mazeWDrsRms[pY][pX];
     var imgName = 'u'+imgObj.U+'d'+imgObj.D+'l'+imgObj.L+'r'+imgObj.R;
     setRoom('./jpg/'+imgName+'.jpg');
-    currentPos(pY,pX,"currentPosDiv");
+    // currentPos(pY,pX,"currentPosDiv");
     directionCode = "0";
   }
 
@@ -557,13 +565,18 @@ echo '<!DOCTYPE html>
   }, 100);
 
   function hideVideo() {
+    const vidPlayer = document.getElementById("divVidPlayer");
+    vidPlayer.innerHTML = "";
     video.style.display = "none";
-    vplayer.pause();
+    //vplayer.pause();
   }
 
-  function showVideo() {
+  function showVideo(qVideoURL) {
     video.style.display = "";
-    vplayer.play();
+    // vplayer.play();
+    const vidPlayer = document.getElementById("divVidPlayer");
+    vidPlayer.innerHTML = '<iframe src="' + qVideoURL
+            + '" width="420" height="300" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>';
   }
 
   function showFinalScreen() {
@@ -654,7 +667,7 @@ echo '<!DOCTYPE html>
                   changeRoom(newY,newX);
                   // add to the number of correct answers
                   numCorrect++;
-
+                  resultsContainer.innerHTML = `Correct: ${numCorrect} out of ${totalQuestAsked}`;
                   // console.log('When Correct answer: numCorrect = ' + numCorrect + ' [posY,posX: (' + posY + ',' + posX+ ')] ' +
                   //               ' [newY,newX: (' + newY + ',' + newX+ ') ]');
                   //console.log('When Correct answer: numCorrect = ' + numCorrect + ' newY,newX: (' + newY + ',' + newX+ ') ');
@@ -679,9 +692,10 @@ echo '<!DOCTYPE html>
                       //alert('Congratulations!!! \nThis is the end of your journey! \nYour score will be recorded!');
                       handleJSONData(scoreData, 1); //to set the data setScoreData ()
                       showFinalScreen();
-                      document.getElementById("finScrTxt").textContent = "Congratulations!!! "
-                                    + "You reached the destination and saved the patient! "
-                                     + "Your score will be recorded! ";
+                      document.getElementById("finScrTxtLine1").textContent = "Congratulations!!! ";
+                      document.getElementById("finScrTxtLine2").textContent = "You\'ve reached the destination and saved the patient! ";
+                      document.getElementById("finScrTxtLine3").textContent = "Your score will be recorded! ";
+                      document.getElementById("finScrTxtLine4").textContent = "Correct answers: " + numCorrect + "... Completed in time(sec): " + timeElapsedVar;
                       //'Congratulations!!! \nThis is the end of your journey! \nYour score will be recorded!'
                       // if (confirm('Are you sure you want to save this thing into the database?')) {
                       //       handleJSONData(scoreData);
@@ -704,14 +718,14 @@ echo '<!DOCTYPE html>
                   stayInRoom(posY,posX);
                   // console.log('When wrong answer: numCorrect = ' + numCorrect + ' posY,posX: (' + posY + ',' + posX+ ') ');
                   // console.log('When wrong answer: numCorrect = ' + numCorrect + ' newY,newX: (' + newY + ',' + newX+ ') ');
-                  showVideo();
+                  showVideo(currentQuestion.questionURL); //divVidPlayer
 
                 },1000);
               }
             });
 
             // show number of correct answers out of total
-            resultsContainer.innerHTML = `${numCorrect} out of ${totalQuestAsked} in time elapsed: ${timeElapsedVar}`;
+            resultsContainer.innerHTML = `Correct: ${numCorrect} out of ${totalQuestAsked}`; //
             // isMove = true; //let it moves - sprite
             userName = document.getElementById("userId").value;
 
@@ -805,11 +819,11 @@ echo '<!DOCTYPE html>
           }
         }
 
-        function currentPos (passedY, passedX, targetDivId) {
-          const displayDiv = document.getElementById(targetDivId);
-          displayDiv.innerHTML = "Current Position: " + passedX + " * " + passedY; //currentPos
-          //showMaze(arrMazeInit, "mazeMap");
-        }
+        // function currentPos (passedY, passedX, targetDivId) {
+        //   const displayDiv = document.getElementById(targetDivId);
+        //   //displayDiv.innerHTML = "Current Position: " + passedX + " * " + passedY; //currentPos
+        //   //showMaze(arrMazeInit, "mazeMap");
+        // }
 
         function showMaze (mazePassed,targetId) {
           //here we are going to display the maze table/array
@@ -930,7 +944,6 @@ echo '<!DOCTYPE html>
             //console.log(seconds + " seconds");
             return seconds;
           }
-
                     function setScoreData () {
                       currentScoreData = [// outer level array literal
                        { // second level object literals
@@ -954,47 +967,6 @@ echo '<!DOCTYPE html>
 
 echo '</body></html>';
 
-function getAllQuestions($table, $connStr)
-{
-    $sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered FROM ".$table;
-    $result = $connStr->query($sql);
-      if ($result->num_rows > 0) {
-        $listQuestions = [];
-            while($row = $result->fetch_assoc()) {
-              //$listQuestions[] = new Question();
-              $nextQuestion = new Question();
-                $nextQuestion->qId = $row["qId"];
-                $nextQuestion->qTxt = $row["qTxt"];
-                $nextQuestion->qIsTaken = $row["qIsTaken"];
-                $nextQuestion->qIsAnswered = $row["qIsAnswered"];
-
-                //$sql = "SELECT ansId, ansTxt, ansQId, ansIsValid FROM tabanswers WHERE ansQId=".$row["qId"];
-                //echo "Object: ".$nextQuestion->get_qTxt();
-
-                //SELECT `ansId`, `ansTxt`, `ansQId`, `ansIsValid` FROM `tabanswers` WHERE 1
-                $sql = "SELECT ansId, ansTxt, ansQId, ansIsValid FROM tabanswers WHERE ansQId=".$row["qId"];
-                $resultAns = $connStr->query($sql);
-                  if ($resultAns->num_rows > 0) {
-                    $listAnswers = [];
-                    while($rowAns = $resultAns->fetch_assoc()) {
-                        $nextAns = new Answer();
-                          $nextAns->ansId = $rowAns["ansId"];
-                          $nextAns->ansTxt = $rowAns["ansTxt"];
-                          $nextAns->ansQId = $rowAns["ansQId"];
-                          $nextAns->ansIsValid = $rowAns["ansIsValid"];
-                        $listAnswers[] = $nextAns;
-                    }
-                  }
-              $nextQuestion->listAnswers = $listAnswers;
-              $listQuestions[] = $nextQuestion;
-
-          }
-
-      } else {
-          echo "0 results";
-      }
-      return $listQuestions;
-}
 $connVar->close();
 
 /*

@@ -158,6 +158,7 @@ function mazeQuestionsArr($mazeInit,$listQuestions) {
           $qObj->qTxt = $jsonArr[$indexQ]->question;
           $qObj->listAnswers = $jsonArr[$indexQ]->answers;
           $qObj->validAnswer = $jsonArr[$indexQ]->correctAnswer;
+          $qObj->questionURL = $jsonArr[$indexQ]->questionURL;
           $indexQ++;
           //$listQuestions
         } else {
@@ -359,4 +360,48 @@ function uuid()
         mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
     );
 }
+
+function getAllQuestions($table, $connStr)
+{
+    $sql = "SELECT qId, qTxt, qIsTaken, qIsAnswered, questionurl FROM ".$table;
+    $result = $connStr->query($sql);
+      if ($result->num_rows > 0) {
+        $listQuestions = [];
+            while($row = $result->fetch_assoc()) {
+              //$listQuestions[] = new Question();
+              $nextQuestion = new Question();
+                $nextQuestion->qId = $row["qId"];
+                $nextQuestion->qTxt = $row["qTxt"];
+                $nextQuestion->qIsTaken = $row["qIsTaken"];
+                $nextQuestion->qIsAnswered = $row["qIsAnswered"];
+                $nextQuestion->questionURL = $row["questionurl"];
+
+                //$sql = "SELECT ansId, ansTxt, ansQId, ansIsValid FROM tabanswers WHERE ansQId=".$row["qId"];
+                //echo "Object: ".$nextQuestion->get_qTxt();
+
+                //SELECT `ansId`, `ansTxt`, `ansQId`, `ansIsValid` FROM `tabanswers` WHERE 1
+                $sql = "SELECT ansId, ansTxt, ansQId, ansIsValid FROM tabanswers WHERE ansQId=".$row["qId"];
+                $resultAns = $connStr->query($sql);
+                  if ($resultAns->num_rows > 0) {
+                    $listAnswers = [];
+                    while($rowAns = $resultAns->fetch_assoc()) {
+                        $nextAns = new Answer();
+                          $nextAns->ansId = $rowAns["ansId"];
+                          $nextAns->ansTxt = $rowAns["ansTxt"];
+                          $nextAns->ansQId = $rowAns["ansQId"];
+                          $nextAns->ansIsValid = $rowAns["ansIsValid"];
+                        $listAnswers[] = $nextAns;
+                    }
+                  }
+              $nextQuestion->listAnswers = $listAnswers;
+              $listQuestions[] = $nextQuestion;
+
+          }
+
+      } else {
+          echo "0 results";
+      }
+      return $listQuestions;
+}
+
 ?>
